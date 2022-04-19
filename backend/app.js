@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const connectDB = require('./database/db')
 const messagesRouter = require('./routes/messagesRoute')
+const usersRouter = require('./routes/usersRoute')
 
 //connect to DB
 //connectDB();
@@ -18,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
 app.use('/api/messages', messagesRouter);
-
+app.use('/api/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

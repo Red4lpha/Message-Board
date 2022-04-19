@@ -3,12 +3,12 @@ const router = express.Router();
 const { users_create, users_update, users_delete} = require('../controllers/usersController');
 
 /* POST a new user */
-router.route('/create').post(messages_create);
+router.route('/create').post(users_create);
 
 /* update an user */
-router.route('/:id/update').put(messages_update);
+router.route('/:id/update').put(users_update);
 
 /* DELETE an user */
-router.route('/:id/delete').delete(messages_delete)
+router.route('/:id/delete').delete(users_delete)
 
 module.exports = router;
