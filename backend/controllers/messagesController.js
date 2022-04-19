@@ -1,5 +1,3 @@
-
-
 // @desc Get all mesages for the topic
 // @route GET /api/messages
 // @access public
