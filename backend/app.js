@@ -2,12 +2,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const dotenv = require('dotenv').config();
 const connectDB = require('./database/db')
 const messagesRouter = require('./routes/messagesRoute')
 const usersRouter = require('./routes/usersRoute')
-
 //connect to DB
-//connectDB();
+connectDB();
+//console.log(process.env);
 
 const app = express();
 
