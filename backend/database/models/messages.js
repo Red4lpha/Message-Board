@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const messagesSchema = mongoose.Schema({
   text: {
     type: String,
-    required: [true, 'Please add a message']
+    required: [true, 'Error: Please add a message']
   },
   owner: {
     type: Schema.Types.ObjectId,
@@ -15,6 +15,11 @@ const messagesSchema = mongoose.Schema({
     ref: 'Messages',
     default: null, //If left at default, then assumed to be a top level message
   },
+  vote_count : {
+    type: Number,
+    required: [true, 'Error:  Need a vote count'],
+    default: 1
+  }
 },
 {
   timestamps: true

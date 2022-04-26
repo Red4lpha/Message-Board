@@ -1,4 +1,5 @@
-const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
+import { Request, Response } from "express";
 const bcrypt = require('bcryptjs');
 const Users = require('../database/models/users');
 
@@ -12,7 +13,7 @@ const users_create = [
 	body('email').isEmail().withMessage('Must be a valid email address'),
 	body('password').isLength({ min: 5 }).withMessage('Password needs to be at least 5 characters'),
 
-	async (req, res) => {
+	async (req: Request, res: Response) => {
 		const { name, email, password } = req.body;
 		//If the validator caught any errors
 		const errors = validationResult(req);
@@ -54,7 +55,7 @@ const users_create = [
 // @desc login an user
 // @route PUT /api/users/login
 // @access private
-const users_login = async (req, res) => {
+const users_login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
    //Check for user email
@@ -75,14 +76,14 @@ const users_login = async (req, res) => {
 // @desc Update an user
 // @route PUT /api/users/:id/update
 // @access private
-const users_update = (req, res) => {
+const users_update = (req: Request, res: Response) => {
 	res.status(200).json({message: 'User updated'});
 };
 
 // @desc Delete an user
 // @route DELETE /api/users/:id/delete
 // @access private
-const users_delete = (req, res) => {
+const users_delete = (req: Request, res: Response) => {
 	res.status(200).json({message: 'User DELETEd'});
 };
 

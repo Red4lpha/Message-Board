@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express'
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv').config();
 const connectDB = require('./database/db')
+
 const messagesRouter = require('./routes/messagesRoute')
 const usersRouter = require('./routes/usersRoute')
 //connect to DB
@@ -19,23 +20,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
-app.use('/api/messages', messagesRouter);
+//app.use('/api/messages', messagesRouter);
 app.use('/api/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+const port: string = process.env.port || '5000'
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
+app.listen(port, () => console.log(`Running on port ${port}`))

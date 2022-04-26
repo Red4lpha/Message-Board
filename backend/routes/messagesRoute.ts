@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
 const { messages_get, messages_create, messages_reply_create, messages_update, messages_delete} = 
 require('../controllers/messagesController');
 
+export const router = Router();
 /* GET all the message */
 router.route('/').get(messages_get);
 
