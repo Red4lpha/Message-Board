@@ -1,6 +1,6 @@
 "use strict";
-const mongoose = require('mongoose');
-const usersSchema = mongoose.Schema({
+const mongoose_1 = require("mongoose");
+const usersSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: [true, 'Please add a name']
@@ -17,5 +17,6 @@ const usersSchema = mongoose.Schema({
 }, {
     timestamps: true
 });
-module.exports = mongoose.model('Users', usersSchema);
+const Users = (0, mongoose_1.model)('Users', usersSchema);
+module.exports = Users;
 //# sourceMappingURL=users.js.map

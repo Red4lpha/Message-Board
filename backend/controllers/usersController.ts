@@ -1,7 +1,8 @@
 import { body, validationResult } from 'express-validator';
 import { Request, Response } from "express";
 const bcrypt = require('bcryptjs');
-const Users = require('../database/models/users');
+import Users from '../database/models/users'
+import { UsersInterface } from 'types/types';
 
 // @desc Create a new user
 // @route POST /api/users/create
@@ -14,13 +15,16 @@ const users_create = [
 	body('password').isLength({ min: 5 }).withMessage('Password needs to be at least 5 characters'),
 
 	async (req: Request, res: Response) => {
-		const { name, email, password } = req.body;
+    const name: UsersInterface['name'] = req.body.name;
+    const email: UsersInterface['email'] = req.body.email;
+    const password: UsersInterface['password'] = req.body.password;
+
 		//If the validator caught any errors
 		const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }	
-		const userExist = await Users.findOne({email})
+		const userExist: UsersInterface | null = await Users.findOne({email})
 
     if(userExist) {
       //TODO move this be with the other validators
@@ -33,11 +37,12 @@ const users_create = [
     const hashedPassword = await bcrypt.hash(password, salt);
     
     // Create User
-    const user = await Users.create({
+    const user = new Users<UsersInterface>({
       name,
       email,
       password: hashedPassword,
     })
+    await user.save();
     //TODO generate token
     //TODO remove returning back the password and non-needed fields
 		if(user) {
@@ -56,10 +61,11 @@ const users_create = [
 // @route PUT /api/users/login
 // @access private
 const users_login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const email: UsersInterface['email'] = req.body.email;
+  const password: UsersInterface['password'] = req.body.password;
 
    //Check for user email
-  const user = await Users.findOne({email});
+  const user: UsersInterface | null = await Users.findOne({email});
   
   //TODO generate the token
   if(user && (await bcrypt.compare(password, user.password))){

@@ -8,10 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const bcrypt = require('bcryptjs');
-const Users = require('../database/models/users');
+const users_1 = __importDefault(require("../database/models/users"));
 // @desc Create a new user
 // @route POST /api/users/create
 // @access public
@@ -22,13 +25,15 @@ const users_create = [
     (0, express_validator_1.body)('email').isEmail().withMessage('Must be a valid email address'),
     (0, express_validator_1.body)('password').isLength({ min: 5 }).withMessage('Password needs to be at least 5 characters'),
     (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { name, email, password } = req.body;
+        const name = req.body.name;
+        const email = req.body.email;
+        const password = req.body.password;
         //If the validator caught any errors
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const userExist = yield Users.findOne({ email });
+        const userExist = yield users_1.default.findOne({ email });
         if (userExist) {
             //TODO move this be with the other validators
             //throw new Error('User already exists');
@@ -38,11 +43,12 @@ const users_create = [
         const salt = yield bcrypt.genSalt(10);
         const hashedPassword = yield bcrypt.hash(password, salt);
         // Create User
-        const user = yield Users.create({
+        const user = new users_1.default({
             name,
             email,
             password: hashedPassword,
         });
+        yield user.save();
         //TODO generate token
         //TODO remove returning back the password and non-needed fields
         if (user) {
@@ -62,9 +68,10 @@ const users_create = [
 // @route PUT /api/users/login
 // @access private
 const users_login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+    const email = req.body.email;
+    const password = req.body.password;
     //Check for user email
-    const user = yield Users.findOne({ email });
+    const user = yield users_1.default.findOne({ email });
     //TODO generate the token
     if (user && (yield bcrypt.compare(password, user.password))) {
         res.status(201).json({

@@ -1,8 +1,8 @@
 import express from 'express'
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const dotenv = require('dotenv').config();
+import path from 'path';
+//import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import 'dotenv/config';
 const connectDB = require('./database/db')
 
 const messagesRouter = require('./routes/messagesRoute')
@@ -16,14 +16,14 @@ const app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+//not current used
+//app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
-//app.use('/api/messages', messagesRouter);
+app.use('/api/messages', messagesRouter);
 app.use('/api/users', usersRouter);
 
 
-const port: string = process.env.port || '5000'
-
+const port: string = process.env.PORT || '3000'
 app.listen(port, () => console.log(`Running on port ${port}`))
