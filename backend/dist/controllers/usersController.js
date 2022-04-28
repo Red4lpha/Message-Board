@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const bcrypt = require('bcryptjs');
 const users_1 = __importDefault(require("../database/models/users"));
-// @desc Create a new user
-// @route POST /api/users/create
-// @access public
+//? @desc Create a new user
+//? @route POST /api/users/create
+//? @access public
 const users_create = [
-    // Validate and sanitize fields.
+    //? Validate and sanitize fields.
     (0, express_validator_1.body)('name').trim().isLength({ min: 3 }).escape().withMessage('Name must be at least 3 characters.')
         .isAlphanumeric().withMessage('User name only accepts alphanumeric characters'),
     (0, express_validator_1.body)('email').isEmail().withMessage('Must be a valid email address'),
@@ -28,7 +28,7 @@ const users_create = [
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
-        //If the validator caught any errors
+        //?If the validator caught any errors
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
@@ -39,10 +39,10 @@ const users_create = [
             //throw new Error('User already exists');
             return res.status(400).json({ Message: 'User already exists' });
         }
-        //Hash password
+        //?Hash password
         const salt = yield bcrypt.genSalt(10);
         const hashedPassword = yield bcrypt.hash(password, salt);
-        // Create User
+        //? Create User
         const user = new users_1.default({
             name,
             email,
@@ -64,13 +64,13 @@ const users_create = [
         }
     })
 ];
-// @desc login an user
-// @route PUT /api/users/login
-// @access private
+//? @desc login an user
+//? @route PUT /api/users/login
+//? @access private
 const users_login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const password = req.body.password;
-    //Check for user email
+    //?Check for user email
     const user = yield users_1.default.findOne({ email });
     //TODO generate the token
     if (user && (yield bcrypt.compare(password, user.password))) {
@@ -84,16 +84,18 @@ const users_login = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(400).json({ message: 'Invalid user info' });
     }
 });
-// @desc Update an user
-// @route PUT /api/users/:id/update
-// @access private
+//? @desc Update an user
+//? @route PUT /api/users/:id/update
+//? @access private
 const users_update = (req, res) => {
+    //TODO: Update user controller
     res.status(200).json({ message: 'User updated' });
 };
-// @desc Delete an user
-// @route DELETE /api/users/:id/delete
-// @access private
+//? @desc Delete an user
+//? @route DELETE /api/users/:id/delete
+//? @access private
 const users_delete = (req, res) => {
+    //TODO: Delete user controller
     res.status(200).json({ message: 'User DELETEd' });
 };
 module.exports = {
