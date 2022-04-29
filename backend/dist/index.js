@@ -36,6 +36,7 @@ app.use(body_parser_1.default.json());
 //app.use(express.static(path.join(__dirname, 'public')));
 //? ---Rules of the API
 app.use((req, res, next) => {
+    //TODO: Warning- we might need to update the origin to be restricted to frontend
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     if (req.method == 'OPTIONS') {

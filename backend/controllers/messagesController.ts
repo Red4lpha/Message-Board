@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { MessagesInterface } from "types/types";
 import Messages from '../database/models/messages'
+import {Types} from 'mongoose'
 
 //? @desc Get all mesages for the topic
 //? @route GET /api/messages
@@ -51,10 +52,45 @@ const messages_create = async (req: Request, res: Response) => {
 //? @desc Create a new reply message
 //? @route POST /api/messages/:id/create
 //? @access private
-const messages_reply_create = (req: Request, res: Response) => {
-	//TODO: Reply message controller
+const messages_reply_create = async (req: Request, res: Response) => {
+	const owner: MessagesInterface["owner"] = req.body.owner;
+	const text: MessagesInterface["text"] = req.body.text;
+	const parentID: MessagesInterface["id"] = new Types.ObjectId(req.params.id);
+
+	if(!req.body){
+    res.status(400).json({Message: 'Invalid request'});
+  }
+	//check to see if the message id is correct
+	const messageExist: MessagesInterface | null = await Messages.findOne({_id: parentID})
+
+	if(!messageExist) {
+		//throw new Error('User already exists');
+		return res.status(400).json({Message: 'Cannot find original message'})
+	}
+	//Create the reply message
+	const message = new Messages<MessagesInterface>({
+		text: text,
+		owner: owner,
+		parent: parentID,
+	});
+
+	try {
+		await message.save();
+	} catch {
+		throw new Error('Cannot create reply message');
+	}
+	
+	//TODO: need chance error here incase bad request
+	res.status(200).json({
+		_id: message.id,
+		text: message.text,
+		owner: message.owner,
+		parent: message.parent,
+		vote_count: message.vote_count,
+	});
+
+
 	//TODO: Use protection route to validate user
-	//TODO: Ensure message id is valid
 	res.status(200).json({message: 'messages POST - reply'});
 };
 
