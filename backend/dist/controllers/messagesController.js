@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const messages_1 = __importDefault(require("../database/models/messages"));
+const mongoose_1 = require("mongoose");
 //? @desc Get all mesages for the topic
 //? @route GET /api/messages
 //? @access public
@@ -29,15 +30,22 @@ const messages_get = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 //? @route POST /api/messages/create
 //? @access private
 const messages_create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const owner = req.body.owner;
+    const user_id = req.body.owner;
     const text = req.body.text;
     if (!req.body) {
         res.status(400).json({ Message: 'Invalid request' });
     }
+    //Find the user name based off the id
+    const user = yield messages_1.default.findOne({ _id: user_id });
+    if (!user)
+        return res.status(400).json({ Message: 'Cannot find user' });
     //TODO: Implement protection route, for validation of user
     const message = new messages_1.default({
         text: text,
-        owner: owner,
+        owner: {
+            name: user.name,
+            name_id: user.id,
+        },
     });
     try {
         yield message.save();
@@ -57,12 +65,43 @@ const messages_create = (req, res) => __awaiter(void 0, void 0, void 0, function
 //? @desc Create a new reply message
 //? @route POST /api/messages/:id/create
 //? @access private
-const messages_reply_create = (req, res) => {
-    //TODO: Reply message controller
+const messages_reply_create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //TODO: Update controller for name message schema
+    const owner = req.body.owner;
+    const text = req.body.text;
+    const parentID = new mongoose_1.Types.ObjectId(req.params.id);
+    if (!req.body) {
+        res.status(400).json({ Message: 'Invalid request' });
+    }
+    //check to see if the message id is correct
+    const messageExist = yield messages_1.default.findOne({ _id: parentID });
+    if (!messageExist) {
+        //throw new Error('User already exists');
+        return res.status(400).json({ Message: 'Cannot find original message' });
+    }
+    //Create the reply message
+    const message = new messages_1.default({
+        text: text,
+        owner: owner,
+        parent: parentID,
+    });
+    try {
+        yield message.save();
+    }
+    catch (_b) {
+        throw new Error('Cannot create reply message');
+    }
+    //TODO: need chance error here incase bad request
+    res.status(200).json({
+        _id: message.id,
+        text: message.text,
+        owner: message.owner,
+        parent: message.parent,
+        vote_count: message.vote_count,
+    });
     //TODO: Use protection route to validate user
-    //TODO: Ensure message id is valid
     res.status(200).json({ message: 'messages POST - reply' });
-};
+});
 //? @desc Update a message
 //? @route PUT /api/messages/:id/update
 //? @access private

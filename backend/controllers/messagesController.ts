@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { MessagesInterface } from "types/types";
+import { MessagesInterface, UsersInterface } from "types/types";
 import Messages from '../database/models/messages'
+import Users from "../database/models/users";
 import {Types} from 'mongoose'
 
 //? @desc Get all mesages for the topic
@@ -21,16 +22,25 @@ const messages_get = async (req: Request, res: Response) => {
 //? @route POST /api/messages/create
 //? @access private
 const messages_create = async (req: Request, res: Response) => {
-	const owner: MessagesInterface["owner"] = req.body.owner;
+	const user_id: UsersInterface["id"] = req.body.user_id;
 	const text: MessagesInterface["text"] = req.body.text;
 
 	if(!req.body){
     res.status(400).json({Message: 'Invalid request'});
   }
+	//Find the user name based off the id
+	const user: UsersInterface | null = await Users.findOne({_id: user_id})
+	if(!user) {
+		return res.status(400).json({Message: `Cannot find user: ${user_id}`})
+	}
+
 	//TODO: Implement protection route, for validation of user
 	const message = new Messages<MessagesInterface>({
 		text: text,
-		owner: owner,
+		owner: {
+			name: user.name,
+			name_id: user.id ,
+		},
 	});
 
 	try {
@@ -45,6 +55,7 @@ const messages_create = async (req: Request, res: Response) => {
 		text: message.text,
 		owner: message.owner,
 		parent: message.parent,
+		ancestors: message.ancestors,
 		vote_count: message.vote_count,
 	});
 };
@@ -53,6 +64,7 @@ const messages_create = async (req: Request, res: Response) => {
 //? @route POST /api/messages/:id/create
 //? @access private
 const messages_reply_create = async (req: Request, res: Response) => {
+	//TODO: Update controller for name message schema
 	const owner: MessagesInterface["owner"] = req.body.owner;
 	const text: MessagesInterface["text"] = req.body.text;
 	const parentID: MessagesInterface["id"] = new Types.ObjectId(req.params.id);

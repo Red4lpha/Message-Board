@@ -13,16 +13,26 @@ const messagesSchema = new Schema<MessagesInterface>({
     type: String,
     required: [true, 'Error: Please add a message']
   },
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: 'Users',
-    required: [true, 'Error: Need an owner'],
+  owner:{
+    name: {
+      type: String,
+      required: [true, 'Error: Missing owners name']
+    },
+    name_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Users',
+      required: [true, 'Error: Need an owner']
+    }
   },
   parent: {
     type: Schema.Types.ObjectId,
     ref: 'Messages',
     default: null, //If left at default, then assumed to be a top level message
   },
+  ancestors: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Messages',
+  }],
   vote_count : {
     type: Number,
     //required: [true, 'Error:  Need a vote count'],

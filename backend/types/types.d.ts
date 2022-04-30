@@ -1,10 +1,16 @@
 import {Types} from 'mongoose'
 
+interface OwnerInterface {
+  name: string,
+  name_id: Types.ObjectId | undefined
+}
+
 export interface MessagesInterface {
 	id?: Types.ObjectId,
   text: string,
-	owner: Types.ObjectId,
+	owner: OwnerInterface,
 	parent?: Types.ObjectId,
+  ancestors?: Types.ObjectId[],
 	vote_count?: number,
 }
 
