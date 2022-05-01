@@ -65,25 +65,42 @@ const messages_create = async (req: Request, res: Response) => {
 //? @access private
 const messages_reply_create = async (req: Request, res: Response) => {
 	//TODO: Update controller for name message schema
-	const owner: MessagesInterface["owner"] = req.body.owner;
+	const user_id: UsersInterface["id"] = req.body.user_id;
 	const text: MessagesInterface["text"] = req.body.text;
-	const parentID: MessagesInterface["id"] = new Types.ObjectId(req.params.id);
-
+	let parentID: MessagesInterface["id"];
+	try {
+		parentID = new Types.ObjectId(req.params.id);
+	} catch {
+		return res.status(400).json({Message: 'Invalid params'})
+	}
+	
 	if(!req.body){
-    res.status(400).json({Message: 'Invalid request'});
+    return res.status(400).json({Message: 'Invalid request'});
   }
-	//check to see if the message id is correct
-	const messageExist: MessagesInterface | null = await Messages.findOne({_id: parentID})
 
-	if(!messageExist) {
+	//Find the user name based off the id
+	const user: UsersInterface | null = await Users.findOne({_id: user_id})
+	if(!user) {
+		return res.status(400).json({Message: 'Cannot find user'})
+	}
+	//check to see if the message id is correct
+	const parentMessage: MessagesInterface | null = await Messages.findOne({_id: parentID})
+	if(!parentMessage) {
 		//throw new Error('User already exists');
 		return res.status(400).json({Message: 'Cannot find original message'})
 	}
+	//grabs the parent messages ancestors
+	const ancestors: MessagesInterface["ancestors"] = parentMessage.ancestors;
+	ancestors?.push(parentID);
 	//Create the reply message
 	const message = new Messages<MessagesInterface>({
 		text: text,
-		owner: owner,
+		owner: {
+			name: user.name,
+			name_id: user.id ,
+		},
 		parent: parentID,
+		ancestors: ancestors,
 	});
 
 	try {
@@ -93,17 +110,7 @@ const messages_reply_create = async (req: Request, res: Response) => {
 	}
 	
 	//TODO: need chance error here incase bad request
-	res.status(200).json({
-		_id: message.id,
-		text: message.text,
-		owner: message.owner,
-		parent: message.parent,
-		vote_count: message.vote_count,
-	});
-
-
-	//TODO: Use protection route to validate user
-	res.status(200).json({message: 'messages POST - reply'});
+	res.status(200).json({message});
 };
 
 //? @desc Update a message

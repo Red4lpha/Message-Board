@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 const bcrypt = require('bcryptjs');
 import Users from '../database/models/users'
 import { UsersInterface } from 'types/types';
+import logging from '../config/logging';
 
 //? @desc Create a new user
 //? @route POST /api/users/create
@@ -18,43 +19,41 @@ const users_create = [
     const name: UsersInterface['name'] = req.body.name;
     const email: UsersInterface['email'] = req.body.email;
     const password: UsersInterface['password'] = req.body.password;
-
+    
+    logging.info('user_create', 'Loading user creation');
 		//?If the validator caught any errors
 		const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }	
-		const userExist: UsersInterface | null = await Users.findOne({email})
 
-    if(userExist) {
-      //TODO move this be with the other validators
-      //throw new Error('User already exists');
-			return res.status(400).json({Message: 'User already exists'})
-    }
-
-    //?Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
-    //? Create User
-    const user = new Users<UsersInterface>({
-      name,
-      email,
-      password: hashedPassword,
-    })
-    await user.save();
-    //TODO generate token
-    //TODO remove returning back the password and non-needed fields
-		if(user) {
-      res.status(201).json({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        password: user.password,
+		Users.findOne({email})
+      .then(async (userExists) => {
+        if(userExists) {
+          //TODO Possibly move this be with the other validators
+          return res.status(400).json({Message: 'User already exists'})
+        }
+        else { //? Create user
+          //?Hash password
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+          
+          const user = new Users<UsersInterface>({
+            name,
+            email,
+            password: hashedPassword,
+          });
+          await user.save();
+          //? Return the info back
+          //TODO generate token
+          //TODO remove returning back the password and non-needed fields
+          res.status(201).json({user})
+        }
       })
-    } else {
-      res.status(400).json({message: 'Invalid user data'});
-    }
+      .catch(error => {
+        logging.error('user_create', 'Error creating new user', error);
+        return res.status(500).json({error});   
+      });
 }];
 
 //? @desc login an user
