@@ -7,7 +7,8 @@ import { MessagesInterface } from 'types/types';
 	parent?: Types.ObjectId,
 	vote_count?: number,
 } */
-
+//TODO: add new boolean field for message deleted
+//TODO: add new array for votes to add vote counts + who voted
 const messagesSchema = new Schema<MessagesInterface>({
   text: {
     type: String,
@@ -37,6 +38,10 @@ const messagesSchema = new Schema<MessagesInterface>({
     type: Number,
     //required: [true, 'Error:  Need a vote count'],
     default: 1
+  },
+  deleted: {
+    type: Boolean,
+    default: false
   }
 },
 {

@@ -1,6 +1,6 @@
 import {Types} from 'mongoose'
 
-interface OwnerInterface {
+export interface OwnerInterface {
   name: string,
   name_id: Types.ObjectId | undefined
 }
@@ -12,6 +12,7 @@ export interface MessagesInterface {
 	parent?: Types.ObjectId,
   ancestors?: Types.ObjectId[],
 	vote_count?: number,
+  deleted?: boolean
 }
 
 export interface UsersInterface {
