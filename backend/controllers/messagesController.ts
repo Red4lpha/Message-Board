@@ -3,19 +3,27 @@ import { MessagesInterface, UsersInterface } from "types/types";
 import Messages from '../database/models/messages'
 import Users from "../database/models/users";
 import {Types} from 'mongoose'
+import logging from "../config/logging";
 
 //? @desc Get all mesages for the topic
 //? @route GET /api/messages
 //? @access public
 const messages_get = async (req: Request, res: Response) => {
-	const messages: MessagesInterface[] = await Messages
+	logging.info('messages_get', 'Loading messages displaying');
+
+	return Messages
 		.find({parent: null}) //? To only get top level messages
 		.limit(50)
 		.sort({'vote_count': -1})
 		.sort({'createdAt': 1})
-
-	//TODO: Add a parallel async to get the first two children of each parent
-	res.status(200).json(messages);
+		.then((messages) => {
+			//TODO: Add a parallel async to get the first two children of each parent
+			return res.status(200).json(messages);
+		})
+		.catch((error) => {
+			logging.error('messages_get', 'Error getting messages', error);
+			return res.status(500).json({error});  
+		});
 };
 
 //? @desc Create a new top level message
@@ -25,38 +33,33 @@ const messages_create = async (req: Request, res: Response) => {
 	const user_id: UsersInterface["id"] = req.body.user_id;
 	const text: MessagesInterface["text"] = req.body.text;
 
+	logging.info('messages_create', 'Loading messages creation');
+
 	if(!req.body){
     res.status(400).json({Message: 'Invalid request'});
   }
-	//Find the user name based off the id
-	const user: UsersInterface | null = await Users.findOne({_id: user_id})
-	if(!user) {
-		return res.status(400).json({Message: `Cannot find user: ${user_id}`})
-	}
 
 	//TODO: Implement protection route, for validation of user
-	const message = new Messages<MessagesInterface>({
-		text: text,
-		owner: {
-			name: user.name,
-			name_id: user.id ,
-		},
-	});
-
-	try {
-		await message.save();
-	} catch {
-		throw new Error('Cannot create message');
-	}
-	
-	//TODO: need chance error here incase bad request
-	res.status(200).json({
-		_id: message.id,
-		text: message.text,
-		owner: message.owner,
-		parent: message.parent,
-		ancestors: message.ancestors,
-		vote_count: message.vote_count,
+	//? Find the user name based off the id
+	return Users.findOne({_id: user_id})
+	.then(async (user) => {
+		if(user){
+			const message = new Messages<MessagesInterface>({
+				text: text,
+				owner: {
+					name: user.name,
+					name_id: user.id ,
+				},
+			});
+			await message.save();
+			return res.status(201).json({user})
+		} else {
+			return res.status(400).json({Message: `Unknown user`})
+		}
+	})
+	.catch((error) =>{
+		logging.error('messages_create', 'Error  cannot create new message', error);
+		return res.status(500).json({error});  
 	});
 };
 
@@ -67,7 +70,10 @@ const messages_reply_create = async (req: Request, res: Response) => {
 	//TODO: Update controller for name message schema
 	const user_id: UsersInterface["id"] = req.body.user_id;
 	const text: MessagesInterface["text"] = req.body.text;
-	let parentID: MessagesInterface["id"];
+	
+	logging.info('messages_reply_create', 'Loading creating a reply message');
+
+	let parentID: Types.ObjectId;
 	try {
 		parentID = new Types.ObjectId(req.params.id);
 	} catch {
@@ -78,39 +84,39 @@ const messages_reply_create = async (req: Request, res: Response) => {
     return res.status(400).json({Message: 'Invalid request'});
   }
 
-	//Find the user name based off the id
+	//? Find the user name based off the id
 	const user: UsersInterface | null = await Users.findOne({_id: user_id})
 	if(!user) {
 		return res.status(400).json({Message: 'Cannot find user'})
 	}
-	//check to see if the message id is correct
-	const parentMessage: MessagesInterface | null = await Messages.findOne({_id: parentID})
-	if(!parentMessage) {
-		//throw new Error('User already exists');
-		return res.status(400).json({Message: 'Cannot find original message'})
-	}
-	//grabs the parent messages ancestors
-	const ancestors: MessagesInterface["ancestors"] = parentMessage.ancestors;
-	ancestors?.push(parentID);
-	//Create the reply message
-	const message = new Messages<MessagesInterface>({
-		text: text,
-		owner: {
-			name: user.name,
-			name_id: user.id ,
-		},
-		parent: parentID,
-		ancestors: ancestors,
+	
+	return Messages.findOne({_id: parentID})
+	.then( async(parentMessage) => {
+		if(!parentMessage) {
+			return res.status(400).json({Message: 'Cannot find original message'})
+		} else {
+			//? grabs the parent messages ancestors
+			const ancestors: MessagesInterface["ancestors"] = parentMessage.ancestors;
+			ancestors?.push(parentID)
+			//? Create the reply message
+			const message = new Messages<MessagesInterface>({
+				text: text,
+				owner: {
+					name: user.name,
+					name_id: user.id ,
+				},
+				parent: parentID,
+				ancestors: ancestors,
+			});
+			await message.save();
+			return res.status(200).json({message});
+		}
+	})
+	.catch((error) => {
+		logging.error('messages_create', 'Error  cannot create new message', error);
+		return res.status(500).json({error});  
 	});
 
-	try {
-		await message.save();
-	} catch {
-		throw new Error('Cannot create reply message');
-	}
-	
-	//TODO: need chance error here incase bad request
-	res.status(200).json({message});
 };
 
 //? @desc Update a message

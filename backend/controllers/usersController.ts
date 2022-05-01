@@ -27,7 +27,7 @@ const users_create = [
       return res.status(400).json({ errors: errors.array() });
     }	
 
-		Users.findOne({email})
+		return Users.findOne({email})
       .then(async (userExists) => {
         if(userExists) {
           //TODO Possibly move this be with the other validators
@@ -47,7 +47,7 @@ const users_create = [
           //? Return the info back
           //TODO generate token
           //TODO remove returning back the password and non-needed fields
-          res.status(201).json({user})
+          return res.status(201).json({user})
         }
       })
       .catch(error => {
@@ -62,20 +62,27 @@ const users_create = [
 const users_login = async (req: Request, res: Response) => {
   const email: UsersInterface['email'] = req.body.email;
   const password: UsersInterface['password'] = req.body.password;
-
-  //?Check for user email
-  const user: UsersInterface | null = await Users.findOne({email});
   
-  //TODO generate the token
-  if(user && (await bcrypt.compare(password, user.password))){
-    res.status(201).json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
+  logging.info('user_login', 'Loading user login');
+  
+  //?Check for user email
+  return Users.findOne({email})
+    .then(async user => {
+      //TODO generate the token
+      if(user && (await bcrypt.compare(password, user.password))){
+        return res.status(201).json({
+          _id: user.id,
+          name: user.name,
+          email: user.email,
+        })
+      } else {
+        return res.status(400).json({message: 'Invalid user info'});
+      }
     })
-  } else {
-    res.status(400).json({message: 'Invalid user info'});
-  }
+    .catch(error => {
+      logging.error('user_login', 'Error logging', error);
+      return res.status(500).json({error});   
+    });
 };
 
 //? @desc Update an user
