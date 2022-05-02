@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const { messages_get, messages_create, messages_reply_create, messages_update, messages_delete} = 
+const { messages_get, messages_create, messages_reply_create, messages_update, messages_delete, messages_vote} = 
 require('../controllers/messagesController');
 
 export const router = Router();
@@ -17,5 +17,8 @@ router.route('/:id/update').put(messages_update);
 
 /* DELETE a message */
 router.route('/:id/delete').delete(messages_delete)
+
+/* Vote on a message */
+router.route('/:id/vote').post(messages_vote)
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MessagesInterface, UsersInterface, OwnerInterface } from "types/types";
+import { MessagesInterface, UsersInterface, OwnerInterface, VoteInterface } from "types/types";
 import Messages from '../database/models/messages'
 import Users from "../database/models/users";
 import {Types} from 'mongoose'
@@ -50,6 +50,10 @@ const messages_create = async (req: Request, res: Response) => {
 					name: user.name,
 					name_id: user.id ,
 				},
+				vote: {
+					vote_count: 1,
+					voters: []
+				}
 			});
 			await message.save();
 			return res.status(201).json({message})
@@ -64,10 +68,9 @@ const messages_create = async (req: Request, res: Response) => {
 };
 
 //? @desc Create a new reply message
-//? @route POST /api/messages/:id/create
+//? @route POST /api/messages/:msgid/create
 //? @access private
 const messages_reply_create = async (req: Request, res: Response) => {
-	//TODO: Update controller for name message schema
 	const user_id: OwnerInterface["name_id"] = req.body.user_id;
 	const text: MessagesInterface["text"] = req.body.text;
 	
@@ -85,7 +88,7 @@ const messages_reply_create = async (req: Request, res: Response) => {
     return res.status(400).json({Message: 'Invalid request'});
   }
 
-	//? This will be rewritten by protection middleware
+	// TODO-This will be rewritten by protection middleware
 	//? Find the user name based off the id
 	const user: UsersInterface | null = await Users.findOne({_id: user_id})
 	if(!user) {
@@ -109,6 +112,10 @@ const messages_reply_create = async (req: Request, res: Response) => {
 				},
 				parent: parentID,
 				ancestors: ancestors,
+				vote: {
+					vote_count: 1,
+					voters: []
+				}
 			});
 			await message.save();
 			return res.status(200).json({message});
@@ -122,10 +129,9 @@ const messages_reply_create = async (req: Request, res: Response) => {
 };
 
 //? @desc Update a message
-//? @route PUT /api/messages/:id/update
+//? @route PUT /api/messages/:msgid/update
 //? @access private
 const messages_update = (req: Request, res: Response) => {
-	//TODO: Use protection route to validate user
 	const user_id: OwnerInterface["name_id"] = req.body.user_id;
 	const text: MessagesInterface["text"] = req.body.text;
 
@@ -167,10 +173,9 @@ const messages_update = (req: Request, res: Response) => {
 };
 
 //? @desc Delete a message
-//? @route DELETE /api/messages/:id/delete
-//? @access public
+//? @route DELETE /api/messages/:msgid/delete
+//? @access private
 const messages_delete = (req: Request, res: Response) => {
-	//TODO: Use protection route to validate user
 	const user_id: OwnerInterface["name_id"] = req.body.user_id;
 
 	logging.info('messages_delete', 'Loading messages deleting');
@@ -208,7 +213,61 @@ const messages_delete = (req: Request, res: Response) => {
 	});
 };
 
+//? @desc Upvote or downvote a message
+//? @route POST /api/messages/:msgid/delete
+//? @access private
+const messages_vote = (req: Request, res: Response) => {
+	const user_id: Types.ObjectId = req.body.user_id;
+	const vote: VoteInterface["vote_count"] | undefined = req.body.vote;
+
+	logging.info('messages_vote', 'Loading messages voting');
+
+	let message_id: MessagesInterface["id"];
+	//? To ensure we catch errors from getting a param id that would not valid for ObjectId
+	try {
+		message_id = new Types.ObjectId(req.params.id);
+	} catch {
+		return res.status(400).json({Message: 'Invalid params'})
+	}
+
+	if(!req.body){
+    res.status(400).json({Message: 'Invalid request'});
+  }
+
+	//TODO: Implement protection route, for validation of user
+	//? Find the user name based off the id
+	return Messages.findOne({_id: message_id})
+	.then(async (message) => {
+		if(user_id == message?.owner.name_id) {
+			return res.status(400).json({Message: `Cannot vote on your own message`})
+		}
+		//? Checks to see if the user has already voted
+		const tempHolder = message?.vote.voters;
+		if (tempHolder !== null ){
+			if(tempHolder?.includes(user_id)){
+				return res.status(400).json({Message: `Already voted on this message`})
+			} 
+		}
+		//? If the vote something other than a vote up or down(+1 or -1)
+		if (vote != 1 && vote !=-1 ){
+			return res.status(400).json({Message: `Invalid vote amount`})
+		}
+		else if(message){
+			message.vote.vote_count = +message.vote.vote_count + +vote;
+			message.vote?.voters.push(user_id)
+			await message.save();
+			return res.status(201).json({message})
+		} else {
+			return res.status(400).json({Message: `Unknown message`})
+		}
+	})
+	.catch((error) =>{
+		logging.error('messages_vote', 'Error voting on a message', error);
+		return res.status(500).json({error});  
+	});
+};
+
 module.exports = {
-  messages_get, messages_create, messages_reply_create, messages_update, messages_delete,
+  messages_get, messages_create, messages_reply_create, messages_update, messages_delete, messages_vote
 }
 

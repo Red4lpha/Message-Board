@@ -1,14 +1,6 @@
 import mongoose, { Schema, model, Types } from 'mongoose';
 import { MessagesInterface } from 'types/types';
 
-/* interface MessagesInterface {
-	text: string,
-	owner: Types.ObjectId,
-	parent?: Types.ObjectId,
-	vote_count?: number,
-} */
-//TODO: add new boolean field for message deleted
-//TODO: add new array for votes to add vote counts + who voted
 const messagesSchema = new Schema<MessagesInterface>({
   text: {
     type: String,
@@ -34,10 +26,15 @@ const messagesSchema = new Schema<MessagesInterface>({
     type: Schema.Types.ObjectId,
     ref: 'Messages',
   }],
-  vote_count : {
+  vote: {
+    vote_count: {
     type: Number,
-    //required: [true, 'Error:  Need a vote count'],
     default: 1
+    },
+    voters: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Users',
+    }]
   },
   deleted: {
     type: Boolean,

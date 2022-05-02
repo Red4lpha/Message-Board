@@ -5,13 +5,18 @@ export interface OwnerInterface {
   name_id: Types.ObjectId | undefined
 }
 
+export interface VoteInterface {
+  vote_count: number,
+  voters: Types.ObjectId[]
+}
+
 export interface MessagesInterface {
 	id?: Types.ObjectId,
   text: string,
 	owner: OwnerInterface,
 	parent?: Types.ObjectId,
   ancestors?: Types.ObjectId[],
-	vote_count?: number,
+	vote: VoteInterface,
   deleted?: boolean
 }
 
