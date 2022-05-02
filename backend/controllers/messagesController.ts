@@ -83,7 +83,6 @@ const messages_reply_create = async (req: Request, res: Response) => {
 	} catch {
 		return res.status(400).json({Message: 'Invalid params'})
 	}
-	console.info(`user: ${req.body.user}`);
 
 	if(!req.body.text){
     return res.status(400).json({Message: 'Please add some text'});
