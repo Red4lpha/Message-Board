@@ -1,7 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import { Request, Response } from "express";
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 import Users from '../database/models/users'
 import { UsersInterface } from 'types/types';
 import logging from '../config/logging';
@@ -107,7 +107,8 @@ const users_delete = (req: Request, res: Response) => {
 
 //Generate JWT
 const generateToken = (id: Types.ObjectId): string => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  const secret: string = process.env.JWT_SECRET || ""
+  return jwt.sign({ id }, secret, {
     expiresIn: '30d',
   })
 }
