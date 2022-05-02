@@ -30,13 +30,13 @@ const messages_get = async (req: Request, res: Response) => {
 //? @route POST /api/messages/create
 //? @access private
 const messages_create = async (req: Request, res: Response) => {
-	const user_id: OwnerInterface["name_id"] = req.body.user_id;
+	const user_id: OwnerInterface["name_id"] = req.body.user._id;
 	const text: MessagesInterface["text"] = req.body.text;
 
 	logging.info('messages_create', 'Loading messages creation');
 
-	if(!req.body){
-    res.status(400).json({Message: 'Invalid request'});
+	if(!req.body.text){
+    return res.status(400).json({message: 'Please add some text'})
   }
 
 	//TODO: Implement protection route, for validation of user
@@ -50,7 +50,7 @@ const messages_create = async (req: Request, res: Response) => {
 					name: user.name,
 					name_id: user.id ,
 				},
-				vote: {
+				votes: {
 					vote_count: 1,
 					voters: []
 				}
@@ -71,11 +71,11 @@ const messages_create = async (req: Request, res: Response) => {
 //? @route POST /api/messages/:msgid/create
 //? @access private
 const messages_reply_create = async (req: Request, res: Response) => {
-	const user_id: OwnerInterface["name_id"] = req.body.user_id;
+	const user_id: OwnerInterface["name_id"] = req.body.user._id;
+	const user_name: OwnerInterface["name"] = req.body.user.name;
 	const text: MessagesInterface["text"] = req.body.text;
 	
 	logging.info('messages_reply_create', 'Loading creating a reply message');
-
 	let parentID: Types.ObjectId;
 	//? To ensure we catch errors from getting a param id that would not valid for ObjectId
 	try {
@@ -83,22 +83,19 @@ const messages_reply_create = async (req: Request, res: Response) => {
 	} catch {
 		return res.status(400).json({Message: 'Invalid params'})
 	}
-	
-	if(!req.body){
-    return res.status(400).json({Message: 'Invalid request'});
+	console.info(`user: ${req.body.user}`);
+
+	if(!req.body.text){
+    return res.status(400).json({Message: 'Please add some text'});
   }
 
-	// TODO-This will be rewritten by protection middleware
-	//? Find the user name based off the id
-	const user: UsersInterface | null = await Users.findOne({_id: user_id})
-	if(!user) {
-		return res.status(400).json({Message: 'Cannot find user'})
-	}
-	
 	return Messages.findOne({_id: parentID})
 	.then( async(parentMessage) => {
 		if(!parentMessage) {
 			return res.status(400).json({Message: 'Cannot find original message'})
+		}
+		else if(parentMessage.deleted){
+			return res.status(401).json({Message: 'Cannot reply on a deleted message'})	
 		} else {
 			//? grabs the parent messages ancestors
 			const ancestors: MessagesInterface["ancestors"] = parentMessage.ancestors;
@@ -107,12 +104,12 @@ const messages_reply_create = async (req: Request, res: Response) => {
 			const message = new Messages<MessagesInterface>({
 				text: text,
 				owner: {
-					name: user.name,
-					name_id: user.id
+					name: user_name,
+					name_id: user_id
 				},
 				parent: parentID,
 				ancestors: ancestors,
-				vote: {
+				votes: {
 					vote_count: 1,
 					voters: []
 				}
@@ -132,7 +129,7 @@ const messages_reply_create = async (req: Request, res: Response) => {
 //? @route PUT /api/messages/:msgid/update
 //? @access private
 const messages_update = (req: Request, res: Response) => {
-	const user_id: OwnerInterface["name_id"] = req.body.user_id;
+	const user_id: OwnerInterface["name_id"] = req.body.user._id;
 	const text: MessagesInterface["text"] = req.body.text;
 
 	logging.info('messages_update', 'Loading messages updating');
@@ -145,16 +142,14 @@ const messages_update = (req: Request, res: Response) => {
 		return res.status(400).json({Message: 'Invalid params'})
 	}
 
-	if(!req.body){
-    res.status(400).json({Message: 'Invalid request'});
+	if(!req.body.text){
+    res.status(400).json({Message: 'Invalid text update'});
   }
 
 	//TODO: Implement protection route, for validation of user
 	//? Find the user name based off the id
 	return Messages.findOne({_id: message_id})
 	.then(async (message) => {
-		console.log(`user id: ${user_id}`)
-		console.log(`message.owner ${message?.owner.name_id}`)
 		if(user_id != message?.owner.name_id) {
 			return res.status(401).json({Message: `Unauthorized user - not the owner`})
 		}
@@ -176,7 +171,7 @@ const messages_update = (req: Request, res: Response) => {
 //? @route DELETE /api/messages/:msgid/delete
 //? @access private
 const messages_delete = (req: Request, res: Response) => {
-	const user_id: OwnerInterface["name_id"] = req.body.user_id;
+	const user_id: OwnerInterface["name_id"] = req.body.user._id;
 
 	logging.info('messages_delete', 'Loading messages deleting');
 
@@ -217,7 +212,7 @@ const messages_delete = (req: Request, res: Response) => {
 //? @route POST /api/messages/:msgid/delete
 //? @access private
 const messages_vote = (req: Request, res: Response) => {
-	const user_id: Types.ObjectId = req.body.user_id;
+	const user_id: Types.ObjectId = req.body.user._id;
 	const vote: VoteInterface["vote_count"] | undefined = req.body.vote;
 
 	logging.info('messages_vote', 'Loading messages voting');
@@ -242,7 +237,7 @@ const messages_vote = (req: Request, res: Response) => {
 			return res.status(400).json({Message: `Cannot vote on your own message`})
 		}
 		//? Checks to see if the user has already voted
-		const tempHolder = message?.vote.voters;
+		const tempHolder = message?.votes.voters;
 		if (tempHolder !== null ){
 			if(tempHolder?.includes(user_id)){
 				return res.status(400).json({Message: `Already voted on this message`})
@@ -253,8 +248,8 @@ const messages_vote = (req: Request, res: Response) => {
 			return res.status(400).json({Message: `Invalid vote amount`})
 		}
 		else if(message){
-			message.vote.vote_count = +message.vote.vote_count + +vote;
-			message.vote?.voters.push(user_id)
+			message.votes.vote_count = +message.votes.vote_count + +vote;
+			message.votes?.voters.push(user_id)
 			await message.save();
 			return res.status(201).json({message})
 		} else {

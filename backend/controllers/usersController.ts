@@ -1,9 +1,11 @@
 import { body, validationResult } from 'express-validator';
 import { Request, Response } from "express";
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 import Users from '../database/models/users'
 import { UsersInterface } from 'types/types';
 import logging from '../config/logging';
+import {Types} from 'mongoose'
 
 //? @desc Create a new user
 //? @route POST /api/users/create
@@ -45,9 +47,11 @@ const users_create = [
           });
           await user.save();
           //? Return the info back
-          //TODO generate token
           //TODO remove returning back the password and non-needed fields
-          return res.status(201).json({user})
+          return res.status(201).json({
+            user,
+            token: generateToken(user._id)
+          })
         }
       })
       .catch(error => {
@@ -100,6 +104,13 @@ const users_delete = (req: Request, res: Response) => {
 	//TODO: Delete user controller
   res.status(200).json({message: 'User DELETEd'});
 };
+
+//Generate JWT
+const generateToken = (id: Types.ObjectId): string => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '30d',
+  })
+}
 
 module.exports = {
   users_create, users_login, users_update, users_delete

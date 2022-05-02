@@ -16,7 +16,7 @@ export interface MessagesInterface {
 	owner: OwnerInterface,
 	parent?: Types.ObjectId,
   ancestors?: Types.ObjectId[],
-	vote: VoteInterface,
+	votes: VoteInterface,
   deleted?: boolean
 }
 

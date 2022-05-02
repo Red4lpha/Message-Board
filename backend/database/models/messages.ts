@@ -26,7 +26,7 @@ const messagesSchema = new Schema<MessagesInterface>({
     type: Schema.Types.ObjectId,
     ref: 'Messages',
   }],
-  vote: {
+  votes: {
     vote_count: {
     type: Number,
     default: 1

@@ -1,24 +1,25 @@
 import { Router } from 'express';
 const { messages_get, messages_create, messages_reply_create, messages_update, messages_delete, messages_vote} = 
 require('../controllers/messagesController');
+const {protect} =  require('../middleware/authMiddleware')
 
 export const router = Router();
 /* GET all the message */
 router.route('/').get(messages_get);
 
 /* POST a top level message */
-router.route('/create').post(messages_create);
+router.route('/create').post(protect, messages_create);
 
 /* POST a reply message */
-router.route('/:id/create').post(messages_reply_create);
+router.route('/:id/create').post(protect, messages_reply_create);
 
 /* update a message */
-router.route('/:id/update').put(messages_update);
+router.route('/:id/update').put(protect, messages_update);
 
 /* DELETE a message */
-router.route('/:id/delete').delete(messages_delete)
+router.route('/:id/delete').delete(protect, messages_delete)
 
 /* Vote on a message */
-router.route('/:id/vote').post(messages_vote)
+router.route('/:id/vote').post(protect, messages_vote)
 
 module.exports = router;
