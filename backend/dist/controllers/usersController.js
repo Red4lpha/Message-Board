@@ -14,7 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
 const bcrypt = require('bcryptjs');
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const users_1 = __importDefault(require("../database/models/users"));
+const logging_1 = __importDefault(require("../config/logging"));
 //? @desc Create a new user
 //? @route POST /api/users/create
 //? @access public
@@ -28,40 +30,40 @@ const users_create = [
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
+        logging_1.default.info('user_create', 'Loading user creation');
         //?If the validator caught any errors
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const userExist = yield users_1.default.findOne({ email });
-        if (userExist) {
-            //TODO move this be with the other validators
-            //throw new Error('User already exists');
-            return res.status(400).json({ Message: 'User already exists' });
-        }
-        //?Hash password
-        const salt = yield bcrypt.genSalt(10);
-        const hashedPassword = yield bcrypt.hash(password, salt);
-        //? Create User
-        const user = new users_1.default({
-            name,
-            email,
-            password: hashedPassword,
+        return users_1.default.findOne({ email })
+            .then((userExists) => __awaiter(void 0, void 0, void 0, function* () {
+            if (userExists) {
+                //TODO Possibly move this be with the other validators
+                return res.status(400).json({ Message: 'User already exists' });
+            }
+            else { //? Create user
+                //?Hash password
+                const salt = yield bcrypt.genSalt(10);
+                const hashedPassword = yield bcrypt.hash(password, salt);
+                const user = new users_1.default({
+                    name,
+                    email,
+                    password: hashedPassword,
+                });
+                yield user.save();
+                //? Return the info back
+                //TODO remove returning back the password and non-needed fields
+                return res.status(201).json({
+                    user,
+                    token: generateToken(user._id)
+                });
+            }
+        }))
+            .catch(error => {
+            logging_1.default.error('user_create', 'Error creating new user', error);
+            return res.status(500).json({ error });
         });
-        yield user.save();
-        //TODO generate token
-        //TODO remove returning back the password and non-needed fields
-        if (user) {
-            res.status(201).json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                password: user.password,
-            });
-        }
-        else {
-            res.status(400).json({ message: 'Invalid user data' });
-        }
     })
 ];
 //? @desc login an user
@@ -70,19 +72,26 @@ const users_create = [
 const users_login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const password = req.body.password;
+    logging_1.default.info('user_login', 'Loading user login');
     //?Check for user email
-    const user = yield users_1.default.findOne({ email });
-    //TODO generate the token
-    if (user && (yield bcrypt.compare(password, user.password))) {
-        res.status(201).json({
-            _id: user.id,
-            name: user.name,
-            email: user.email,
-        });
-    }
-    else {
-        res.status(400).json({ message: 'Invalid user info' });
-    }
+    return users_1.default.findOne({ email })
+        .then((user) => __awaiter(void 0, void 0, void 0, function* () {
+        //TODO generate the token
+        if (user && (yield bcrypt.compare(password, user.password))) {
+            return res.status(201).json({
+                _id: user.id,
+                name: user.name,
+                email: user.email,
+            });
+        }
+        else {
+            return res.status(400).json({ message: 'Invalid user info' });
+        }
+    }))
+        .catch(error => {
+        logging_1.default.error('user_login', 'Error logging', error);
+        return res.status(500).json({ error });
+    });
 });
 //? @desc Update an user
 //? @route PUT /api/users/:id/update
@@ -97,6 +106,13 @@ const users_update = (req, res) => {
 const users_delete = (req, res) => {
     //TODO: Delete user controller
     res.status(200).json({ message: 'User DELETEd' });
+};
+//Generate JWT
+const generateToken = (id) => {
+    const secret = process.env.JWT_SECRET || "";
+    return jsonwebtoken_1.default.sign({ id }, secret, {
+        expiresIn: '30d',
+    });
 };
 module.exports = {
     users_create, users_login, users_update, users_delete

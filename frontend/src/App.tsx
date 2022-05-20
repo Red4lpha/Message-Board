@@ -1,4 +1,8 @@
 import React, {useState} from 'react';
+//import {useSelector, useDispatch} from 'react-redux';
+import { useAppDispatch } from './app/hooks';
+import { register} from './features/auth/authSlice'
+import { userDataInterface } from './types/types';
 import {FormControl, InputLabel, Input, FormHelperText, Button, Paper} from '@mui/material';
 import './App.css';
 
@@ -12,7 +16,25 @@ function App() {
 
   const {name, email, password, password2} = formData;
 
-  const handleSubmit = () => console.log("");
+  //const {user, isLoading, isError, isSuccess, message,} = useSelector((state: any) => state.auth)
+
+  const dispatch = useAppDispatch();
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    if(password !== password2) {
+      console.log('Passwords do not match')
+    } else {
+      const userData: userDataInterface = {
+        name,
+        email,
+        password,
+      }
+      //const temp: string = 'temp'
+      dispatch(register(userData))
+    }
+  }
   const handleReset = () => console.log("");
 
   const onChange = (e: any) => {

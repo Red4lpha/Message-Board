@@ -5,7 +5,7 @@ const API_URL: string = '/api/users/';
 //TODO: replace the any types
 // Register user
 const register = async (userData: any) => {
-  const response = await axios.post(API_URL, userData)
+  const response = await axios.post(API_URL + 'create', userData)
 
   if (response.data) {
     localStorage.setItem('user', JSON.stringify(response.data))

@@ -1,11 +1,5 @@
 "use strict";
 const mongoose_1 = require("mongoose");
-/* interface MessagesInterface {
-    text: string,
-    owner: Types.ObjectId,
-    parent?: Types.ObjectId,
-    vote_count?: number,
-} */
 const messagesSchema = new mongoose_1.Schema({
     text: {
         type: String,
@@ -31,10 +25,19 @@ const messagesSchema = new mongoose_1.Schema({
             type: mongoose_1.Schema.Types.ObjectId,
             ref: 'Messages',
         }],
-    vote_count: {
-        type: Number,
-        //required: [true, 'Error:  Need a vote count'],
-        default: 1
+    votes: {
+        vote_count: {
+            type: Number,
+            default: 1
+        },
+        voters: [{
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: 'Users',
+            }]
+    },
+    deleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import authService from './authService'
+import { userDataInterface } from '../../types/types'
 import { AxiosError } from 'axios'
 
 interface ValidationErrors {
@@ -26,11 +27,11 @@ const initialState: initialStateInterface = {
   isLoading: false,
   message: '',
 }
-
+//export const register = createAsyncThunk<{  rejectValue: ValidationErrors}>(
 // Register user
-export const register = createAsyncThunk<{  rejectValue: ValidationErrors}>(
+export const register = createAsyncThunk<{  rejectValue: ValidationErrors}, userDataInterface>(
   'auth/register',
-  async (user, thunkAPI) => {
+  async (user:any, thunkAPI) => {
     try {
       return await authService.register(user)
     } catch (err) {
@@ -62,7 +63,7 @@ export const register = createAsyncThunk<{  rejectValue: ValidationErrors}>(
 
 // Login user
 export const login = createAsyncThunk<initialStateInterface>(
-  'auth/register',
+  'auth/login',
   async (user, thunkAPI) => {
     try {
       return await authService.login(user)
@@ -135,3 +136,4 @@ export const authSlice = createSlice({
 })
 
 export const { reset } = authSlice.actions;
+export default authSlice.reducer
