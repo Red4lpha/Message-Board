@@ -16,7 +16,7 @@ interface initialStateInterface {
   message: string,
 }
 
-// Get user from localStorage
+//? Get user from localStorage
 
 const user = localStorage.getItem('user')
 
@@ -28,7 +28,7 @@ const initialState: initialStateInterface = {
   message: '',
 }
 //export const register = createAsyncThunk<{  rejectValue: ValidationErrors}>(
-// Register user
+//? Register user
 export const register = createAsyncThunk<{  rejectValue: ValidationErrors}, userDataInterface>(
   'auth/register',
   async (user:any, thunkAPI) => {
@@ -61,8 +61,8 @@ export const register = createAsyncThunk<{  rejectValue: ValidationErrors}, user
   }
 ) */
 
-// Login user
-export const login = createAsyncThunk<initialStateInterface>(
+//? Login user
+export const login = createAsyncThunk<{  rejectValue: ValidationErrors}, userDataInterface>(
   'auth/login',
   async (user, thunkAPI) => {
     try {
