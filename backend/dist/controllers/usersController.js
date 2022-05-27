@@ -76,16 +76,16 @@ const users_login = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     //?Check for user email
     return users_1.default.findOne({ email })
         .then((user) => __awaiter(void 0, void 0, void 0, function* () {
-        //TODO generate the token
         if (user && (yield bcrypt.compare(password, user.password))) {
             return res.status(201).json({
                 _id: user.id,
                 name: user.name,
                 email: user.email,
+                token: generateToken(user._id)
             });
         }
         else {
-            return res.status(400).json({ message: 'Invalid user info' });
+            return res.status(400).json({ message: 'Invalid email or password' });
         }
     }))
         .catch(error => {

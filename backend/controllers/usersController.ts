@@ -72,15 +72,15 @@ const users_login = async (req: Request, res: Response) => {
   //?Check for user email
   return Users.findOne({email})
     .then(async user => {
-      //TODO generate the token
       if(user && (await bcrypt.compare(password, user.password))){
         return res.status(201).json({
           _id: user.id,
           name: user.name,
           email: user.email,
+          token: generateToken(user._id)
         })
       } else {
-        return res.status(400).json({message: 'Invalid user info'});
+        return res.status(400).json({message: 'Invalid email or password'});
       }
     })
     .catch(error => {

@@ -1,8 +1,8 @@
 import {useState} from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { login} from '../features/auth/authSlice'
+import { login, logout} from '../features/auth/authSlice'
 import { userDataInterface } from '../types/types';
-import {FormControl, InputLabel, Input, FormHelperText, Button, Paper} from '@mui/material';
+import {FormControl, InputLabel, Input, Button, Paper} from '@mui/material';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -29,6 +29,10 @@ const Login = () => {
     }))
   }
 
+  const handleLogout = () => {
+    dispatch(logout())
+  }
+
   return (
     <div className="App">
     <Paper>
@@ -41,7 +45,6 @@ const Login = () => {
           onChange={onChange}
           value={email}
           aria-describedby="Email Address Form" />
-          <FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>
         </FormControl>
       </div>
       <div style={{marginBottom: '15px'}}>
@@ -54,7 +57,8 @@ const Login = () => {
           aria-describedby="Password Form" />
         </FormControl>
       </div>
-      <Button onClick={handleSubmit}>Submit</Button>
+      <Button onClick={handleSubmit}>LOGIN</Button>
+      <Button onClick={handleLogout}>LOGOUT</Button>
     </Paper>
   </div>
   )
