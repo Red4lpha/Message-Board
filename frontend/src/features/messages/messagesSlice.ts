@@ -14,6 +14,7 @@ interface initialStateInterface {
   isSuccess: boolean,
   isLoading: boolean,
   message: string,
+  messagesArray: []
 }
 
 //? Get user from localStorage
@@ -25,6 +26,7 @@ const initialState: initialStateInterface = {
   isSuccess: false,
   isLoading: false,
   message: '',
+  messagesArray: []
 }
 
 //? Get all the messages
@@ -68,7 +70,7 @@ export const messagesSlice = createSlice({
       .addCase(getMessages.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
-        state.user = action.payload
+        state.messagesArray = action.payload
       })
       .addCase(getMessages.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false

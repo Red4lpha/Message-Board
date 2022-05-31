@@ -13,6 +13,7 @@ import Register from './components/Register';
 //TODO expand the messages to contain the proper info
 //TODO implement the reply messages
 //TODO implement the reply functionality
+//TODO look into why several get calls are used in the get messages function
 
 
 
