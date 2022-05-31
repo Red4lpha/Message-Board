@@ -208,7 +208,7 @@ const messages_delete = (req: Request, res: Response) => {
 };
 
 //? @desc Upvote or downvote a message
-//? @route POST /api/messages/:msgid/delete
+//? @route POST /api/messages/:msgid/vote
 //? @access private
 const messages_vote = (req: Request, res: Response) => {
 	const user_id: Types.ObjectId = req.body.user._id;

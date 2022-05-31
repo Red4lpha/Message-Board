@@ -17,7 +17,6 @@ interface initialStateInterface {
 }
 
 //? Get user from localStorage
-
 const user = localStorage.getItem('user')
 
 const initialState: initialStateInterface = {

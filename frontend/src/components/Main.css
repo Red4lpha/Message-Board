@@ -1,0 +1,23 @@
+main {
+  display: flex;
+  flex-direction: column;
+  margin: 30px auto;
+  width: 600px;
+  border: 1px solid black;
+}
+
+section {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid red;
+  background-color: aqua;
+  margin: 15px 0;
+  text-align: left;
+}
+div {
+  padding: 10px;
+}
+
+.vote {
+  border-right: 1px solid black;
+}

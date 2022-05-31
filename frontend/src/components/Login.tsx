@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useAppDispatch } from '../app/hooks';
 import { login, logout} from '../features/auth/authSlice'
 import { userDataInterface } from '../types/types';
 import {FormControl, InputLabel, Input, Button, Paper} from '@mui/material';
