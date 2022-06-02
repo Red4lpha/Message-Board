@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import messagesService from './messagesService'
-import { userDataInterface } from '../../types/types'
+import { messagesDataInterface } from '../../types/types';
 import { AxiosError } from 'axios'
 
 interface ValidationErrors {
@@ -14,7 +14,7 @@ interface initialStateInterface {
   isSuccess: boolean,
   isLoading: boolean,
   message: string,
-  messagesArray: []
+  messagesArray: string[]
 }
 
 //? Get user from localStorage
@@ -50,7 +50,31 @@ export const getMessages = createAsyncThunk<{  rejectValue: ValidationErrors}>(
   }
 )
 
-export const messagesSlice = createSlice({
+//? Create a top level post
+export const createMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
+  'messages/createMessage',
+  async (messageData, thunkAPI: any) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await messagesService.createMessage(messageData, token);
+    } catch (err) {
+      let error: AxiosError<ValidationErrors> = err;
+      if(!error.message){
+        throw err;
+      }
+      const message =
+        (error.response &&
+          error.response.data) ||
+        error.message ||
+        error.toString();
+        return message;
+    }
+  }
+)
+
+
+
+export const messagesSlice = createSlice ({
   name: 'message',
   initialState,
   reducers: {
@@ -59,6 +83,7 @@ export const messagesSlice = createSlice({
       state.isSuccess = false
       state.isError = false
       state.message = ''
+      state.messagesArray = []
     },
   },
   extraReducers: (builder) => {
@@ -76,7 +101,19 @@ export const messagesSlice = createSlice({
         state.isLoading = false
         state.isError = true
         state.message = action.payload
-        state.user = null
+      })
+      .addCase(createMessage.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(createMessage.fulfilled, (state, action: PayloadAction<any> ) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.message = (action.payload)
+      })
+      .addCase(createMessage.rejected, (state, action: PayloadAction<any>) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
       })
   },
 })

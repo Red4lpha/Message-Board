@@ -14,6 +14,8 @@ import Register from './components/Register';
 //TODO implement the reply messages
 //TODO implement the reply functionality
 //TODO look into why several get calls are used in the get messages function
+//TODO deal with multiple errors with no backend connection
+//TODO not getting new lines in create_message
 
 
 

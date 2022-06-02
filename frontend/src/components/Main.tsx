@@ -1,24 +1,38 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './Main.css';
 import Message from './Message';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getMessages } from '../features/messages/messagesSlice';
+import { getMessages, reset } from '../features/messages/messagesSlice';
+import LinearLoader from './LinearLoader';
+import Post from './Post';
 
 const Main = () => {
-  const [messageData, setMessageData] = useState({
-    userName: 'Kevin',
-    voteCount: 1,
-    message: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus unde dignissimos praesentium. Modi itaque doloribus eum eligendi vitae. Labore nihil quia fugit a dolor, soluta nesciunt saepe non commodi sunt.'
-  })
-
-  
-
+ 
   const dispatch = useAppDispatch();
+  const {messagesArray, isLoading, isError, message} = useAppSelector((state) => state.messages)
+
   useEffect(() => {
+    //TODO create error message componenet
+    if (isError) {
+      console.log('Error getting Messages: ',message)
+    }
+
+    //TODO reduce the amount of hits to the db
     dispatch(getMessages())
-  },[dispatch])
-  
-  const {messagesArray} = useAppSelector((state) => state.messages)
+
+    return () => {
+      dispatch(reset())
+    }
+  },[dispatch, isError, message])
+
+  if (isLoading) {
+    return (
+    <main>
+      <h1>Main message</h1>
+      <LinearLoader />
+    </main>
+    )
+  }
 
   //TODO clear out the any type
   //TODO look into why several get calls are used in the get messages function
@@ -26,21 +40,27 @@ const Main = () => {
     
     <main>
       <h1>Main message</h1>
-      <Message userName={messageData.userName} voteCount={messageData.voteCount} message={messageData.message}/>
-      {messagesArray != null ? (
+      {messagesArray.length ? (
         <>
-          {messagesArray.map((msg: any) => (
-            <Message
+          {messagesArray.map((msg: any, index) => (
+/*             <Message
             key={msg._id}
             userName={msg.owner.name}
             voteCount={msg.votes.vote_count}
             message={msg.text}
-            />
+            /> */
+            
+            <div>{msg.owner ? 
+              (<><div>index: {index}</div><div>ID: {msg._id}</div><div>owner: {msg.owner.name}</div></>) : 
+            (<><div>index: {index}</div><div>ID: {msg._id}</div><div>owner is void</div><div>{msg.text}</div></>)
+              }</div>
+            
           ))}
         </>  
       ) : (
         <h2>No Replies Yet</h2>
       )}
+      <Post />
     </main>
   )
 }

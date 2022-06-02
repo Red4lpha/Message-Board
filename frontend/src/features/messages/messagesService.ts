@@ -2,6 +2,14 @@ import axios from 'axios'
 
 const API_URL: string = '/api/messages/';
 
+const createTokenHeader = (token: string) => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+}
+
 // Get Messages
 const getMessages = async () => {
   const response = await axios.get(API_URL)
@@ -10,10 +18,10 @@ const getMessages = async () => {
 }
 
 //Post top level message
-const createMessage = async (userData: any) => {
-  const response = await axios.post(API_URL + 'create', userData)
-
-  //TODO create_message functionality  
+const createMessage = async (messageData: any, token: any) => {
+  const header = createTokenHeader(token);
+  const response = await axios.post(API_URL + 'create', messageData, header);
+  
   return response.data
 }
 

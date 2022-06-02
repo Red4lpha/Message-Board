@@ -3,3 +3,7 @@ export interface userDataInterface {
   email: string,
   password: string,
 }
+
+export interface messagesDataInterface {
+  text: string
+}
