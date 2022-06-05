@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import './Main.css';
 import Message from './Message';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { getMessages, reset } from '../features/messages/messagesSlice';
+import {  getMessages, reset } from '../features/messages/messagesSlice';
 import LinearLoader from './LinearLoader';
 import Post from './Post';
 
+
 const Main = () => {
- 
+
   const dispatch = useAppDispatch();
   const {messagesArray, isLoading, isError, message} = useAppSelector((state) => state.messages)
 
@@ -17,11 +18,12 @@ const Main = () => {
       console.log('Error getting Messages: ',message)
     }
 
-    //TODO reduce the amount of hits to the db
+    console.log("main useEffect called")
     dispatch(getMessages())
 
     return () => {
-      dispatch(reset())
+      //dispatch(reset())
+      console.log("main useEffect dismount");
     }
   },[dispatch, isError, message])
 
@@ -32,7 +34,7 @@ const Main = () => {
       <LinearLoader />
     </main>
     )
-  }
+  } 
 
   //TODO clear out the any type
   //TODO look into why several get calls are used in the get messages function
@@ -43,24 +45,20 @@ const Main = () => {
       {messagesArray.length ? (
         <>
           {messagesArray.map((msg: any, index) => (
-/*             <Message
+            
+            <Message
             key={msg._id}
+            id={msg._id}
             userName={msg.owner.name}
             voteCount={msg.votes.vote_count}
             message={msg.text}
-            /> */
-            
-            <div>{msg.owner ? 
-              (<><div>index: {index}</div><div>ID: {msg._id}</div><div>owner: {msg.owner.name}</div></>) : 
-            (<><div>index: {index}</div><div>ID: {msg._id}</div><div>owner is void</div><div>{msg.text}</div></>)
-              }</div>
-            
+            /> 
           ))}
         </>  
       ) : (
         <h2>No Replies Yet</h2>
       )}
-      <Post />
+      <Post /> 
     </main>
   )
 }

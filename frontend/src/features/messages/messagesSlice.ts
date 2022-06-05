@@ -9,19 +9,16 @@ interface ValidationErrors {
 }
 
 interface initialStateInterface {
-  user: string | null,
   isError: boolean,
   isSuccess: boolean,
   isLoading: boolean,
   message: string,
-  messagesArray: string[]
+  messagesArray: any[]
 }
 
 //? Get user from localStorage
-const user = localStorage.getItem('user')
 
 const initialState: initialStateInterface = {
-  user: user ? JSON.parse(user) : null,
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -53,10 +50,10 @@ export const getMessages = createAsyncThunk<{  rejectValue: ValidationErrors}>(
 //? Create a top level post
 export const createMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
   'messages/createMessage',
-  async (messageData, thunkAPI: any) => {
+  async (messageText, thunkAPI: any) => {
     try {
       const token = thunkAPI.getState().auth.user.token
-      return await messagesService.createMessage(messageData, token);
+      return await messagesService.createMessage(messageText, token);
     } catch (err) {
       let error: AxiosError<ValidationErrors> = err;
       if(!error.message){
@@ -72,19 +69,34 @@ export const createMessage = createAsyncThunk<{  rejectValue: ValidationErrors},
   }
 )
 
-
+//? Vote on a message
+export const voteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
+  'messages/voteMessage',
+  async ( messageData, thunkAPI: any) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await messagesService.voteMessage(messageData, token);
+    } catch (err) {
+      let error: AxiosError<ValidationErrors> = err;
+      if(!error.message){
+        throw err;
+      }
+      const message =
+        (error.response &&
+          error.response.data) ||
+        error.message ||
+        error.toString();
+        return message;
+    }
+  }
+)
 
 export const messagesSlice = createSlice ({
   name: 'message',
   initialState,
   reducers: {
-    reset: (state) => {
-      state.isLoading = false
-      state.isSuccess = false
-      state.isError = false
-      state.message = ''
-      state.messagesArray = []
-    },
+    reset: (state) => initialState,
+
   },
   extraReducers: (builder) => {
     builder
@@ -108,9 +120,22 @@ export const messagesSlice = createSlice ({
       .addCase(createMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
-        state.message = (action.payload)
+        state.messagesArray.push(action.payload)
       })
       .addCase(createMessage.rejected, (state, action: PayloadAction<any>) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(voteMessage.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(voteMessage.fulfilled, (state, action: PayloadAction<any> ) => {
+        state.isLoading = false
+        state.isSuccess = true
+        console.log(action.payload)
+      })
+      .addCase(voteMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload

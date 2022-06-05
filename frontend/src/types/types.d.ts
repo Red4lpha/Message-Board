@@ -5,5 +5,7 @@ export interface userDataInterface {
 }
 
 export interface messagesDataInterface {
-  text: string
+  text?: string,
+  id?: string,
+  vote?: number,
 }

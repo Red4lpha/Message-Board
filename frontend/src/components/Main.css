@@ -20,4 +20,21 @@ div {
 
 .vote {
   border-right: 1px solid black;
+  text-align: center;
+  font-size: large;
+}
+.vote > * {
+  padding: 5px;
+}
+.voters {
+  border: 1px solid black;
+  border-radius: 30%;
+  padding: 5px;
+}
+.voters:hover {
+  background-color: limegreen;
+}
+
+.message {
+  white-space: pre-line;
 }

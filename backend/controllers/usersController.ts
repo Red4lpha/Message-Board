@@ -46,6 +46,7 @@ const users_create = [
             password: hashedPassword,
           });
           await user.save();
+          logging.info('user_create', `User: ${user.name} created`)
           //? Return the info back
           //TODO remove returning back the password and non-needed fields
           return res.status(201).json({

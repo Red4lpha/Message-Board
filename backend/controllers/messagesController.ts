@@ -56,7 +56,8 @@ const messages_create = async (req: Request, res: Response) => {
 				}
 			});
 			await message.save();
-			return res.status(201).json({message})
+			logging.info('messages_create', 'message created');
+			return res.status(201).json(message)
 		} else {
 			return res.status(400).json({Message: `Error unknown user`})
 		}
@@ -81,7 +82,7 @@ const messages_reply_create = async (req: Request, res: Response) => {
 	try {
 		parentID = new Types.ObjectId(req.params.id);
 	} catch {
-		return res.status(400).json({Message: 'Invalid params'})
+		return res.status(400).json({Message: 'Invalid parent params'})
 	}
 
 	if(!req.body.text){
@@ -114,11 +115,12 @@ const messages_reply_create = async (req: Request, res: Response) => {
 				}
 			});
 			await message.save();
-			return res.status(200).json({message});
+			logging.info('messages_reply_create', 'Created a reply message');
+			return res.status(200).json(message);
 		}
 	})
 	.catch((error) => {
-		logging.error('messages_create', 'Error  cannot create new message', error);
+		logging.error('messages_create', 'Error cannot create new message', error);
 		return res.status(500).json({error});  
 	});
 
@@ -138,7 +140,7 @@ const messages_update = (req: Request, res: Response) => {
 	try {
 		message_id = new Types.ObjectId(req.params.id);
 	} catch {
-		return res.status(400).json({Message: 'Invalid params'})
+		return res.status(400).json({Message: 'Invalid parent params'})
 	}
 
 	if(!req.body.text){
@@ -155,7 +157,8 @@ const messages_update = (req: Request, res: Response) => {
 		if(message){
 			message.text = text;
 			await message.save();
-			return res.status(201).json({message})
+			logging.info('messages_update', `Message id: ${message_id} updated`)
+			return res.status(201).json(message)
 		} else {
 			return res.status(400).json({Message: `Unknown message`})
 		}
@@ -179,7 +182,7 @@ const messages_delete = (req: Request, res: Response) => {
 	try {
 		message_id = new Types.ObjectId(req.params.id);
 	} catch {
-		return res.status(400).json({Message: 'Invalid params'})
+		return res.status(400).json({Message: 'Invalid parent params'})
 	}
 
 	if(!req.body){
@@ -196,7 +199,8 @@ const messages_delete = (req: Request, res: Response) => {
 		if(message){
 			message.deleted = true;
 			await message.save();
-			return res.status(201).json({message})
+			logging.info('messages_delete', `Message id: ${message_id} deleted`);
+			return res.status(201).json(message)
 		} else {
 			return res.status(400).json({Message: `Unknown message`})
 		}
@@ -250,7 +254,8 @@ const messages_vote = (req: Request, res: Response) => {
 			message.votes.vote_count = +message.votes.vote_count + +vote;
 			message.votes?.voters.push(user_id)
 			await message.save();
-			return res.status(201).json({message})
+			logging.info('messages_vote', `User: ${user_id} voted: ${vote} on ${message_id}`);
+			return res.status(201).json(message)
 		} else {
 			return res.status(400).json({Message: `Unknown message`})
 		}
