@@ -237,18 +237,18 @@ const messages_vote = (req: Request, res: Response) => {
 	return Messages.findOne({_id: message_id})
 	.then(async (message) => {
 		if(user_id == message?.owner.name_id) {
-			return res.status(400).json({Message: `Cannot vote on your own message`})
+			return res.status(400).json({message: "Cannot vote on your own message"})
 		}
 		//? Checks to see if the user has already voted
 		const tempHolder = message?.votes.voters;
 		if (tempHolder !== null ){
 			if(tempHolder?.includes(user_id)){
-				return res.status(400).json({Message: `Already voted on this message`})
+				return res.status(400).json({message: "Already voted on this message"})
 			} 
 		}
 		//? If the vote something other than a vote up or down(+1 or -1)
 		if (vote != 1 && vote !=-1 ){
-			return res.status(400).json({Message: `Invalid vote amount`})
+			return res.status(400).json({message: "Invalid vote amount"})
 		}
 		else if(message){
 			message.votes.vote_count = +message.votes.vote_count + +vote;
@@ -257,7 +257,7 @@ const messages_vote = (req: Request, res: Response) => {
 			logging.info('messages_vote', `User: ${user_id} voted: ${vote} on ${message_id}`);
 			return res.status(201).json(message)
 		} else {
-			return res.status(400).json({Message: `Unknown message`})
+			return res.status(401).json({message: "Not found"})
 		}
 	})
 	.catch((error) =>{

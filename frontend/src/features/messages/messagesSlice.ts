@@ -29,7 +29,7 @@ const initialState: initialStateInterface = {
 //? Get all the messages
 export const getMessages = createAsyncThunk<{  rejectValue: ValidationErrors}>(
   'messages/getMessages',
-  async () => {
+  async (_, thunkAPI: any) => {
     try {
       return await messagesService.getMessages();
     } catch (err) {
@@ -42,7 +42,7 @@ export const getMessages = createAsyncThunk<{  rejectValue: ValidationErrors}>(
           error.response.data) ||
         error.message ||
         error.toString();
-        return message;
+        return thunkAPI.rejectWithValue(message)
     }
   }
 )
@@ -64,7 +64,7 @@ export const createMessage = createAsyncThunk<{  rejectValue: ValidationErrors},
           error.response.data) ||
         error.message ||
         error.toString();
-        return message;
+        return thunkAPI.rejectWithValue(message)
     }
   }
 )
@@ -86,7 +86,7 @@ export const voteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, m
           error.response.data) ||
         error.message ||
         error.toString();
-        return message;
+        return thunkAPI.rejectWithValue(message)
     }
   }
 )
@@ -133,7 +133,13 @@ export const messagesSlice = createSlice ({
       .addCase(voteMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
-        console.log(action.payload)
+        const {_id, votes} = action.payload
+        //console.log('id: ',_id)
+        //console.log('voteCount: ', votes.vote_count)
+        let index = state.messagesArray.findIndex(t => t._id ===_id);
+        //TODO newState might return an undefined
+        index !== -1 ?  
+          state.messagesArray[index].votes = votes : state.isError = true
       })
       .addCase(voteMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
