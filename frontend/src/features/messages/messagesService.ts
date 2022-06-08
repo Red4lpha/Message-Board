@@ -7,14 +7,14 @@ const createTokenHeader = (token: string) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }
+  };
 }
 
 // Get Messages
 const getMessages = async () => {
-  const response = await axios.get(API_URL)
+  const response = await axios.get(API_URL);
 
-  return response.data
+  return response.data;
 }
 
 //Post top level message
@@ -22,42 +22,42 @@ const createMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
   const response = await axios.post(API_URL + 'create', messageData, header);
   
-  return response.data
+  return response.data;
 }
 
 //Post a message reply
 const replyMessage = async (userData: any) => {
-  const response = await axios.post(API_URL + userData.id + '/create', userData)
+  const response = await axios.post(API_URL + userData.id + '/create', userData);
 
   //TODO reply_message functionality  
-  return response.data
+  return response.data;
 }
 
 //Update a message
 const updateMessage = async (userData: any) => {
-  const response = await axios.put(API_URL + userData.id + '/update', userData)
+  const response = await axios.put(API_URL + userData.id + '/update', userData);
 
   //TODO  update_message functionality  
-  return response.data
+  return response.data;
 }
 
 //Delete a message
-const deleteMessage = async (userData: any) => {
-  const response = await axios.delete(API_URL + userData.id + '/delete', userData)
+const deleteMessage = async (messageData: any, token: any) => {
+  const header = createTokenHeader(token);
+  const {id} = messageData;
+  const response = await axios.delete(API_URL + id + '/delete', header);
 
   //TODO delete_message functionality  
-  return response.data
+  return response.data;
 }
 
 //Post a vote
 const voteMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
-  const {id, vote} = messageData
-  console.log('vote: ')
-  console.log(vote)
-  const response = await axios.post(API_URL + id + '/vote', messageData, header)
+  const {id} = messageData;
+  const response = await axios.post(API_URL + id + '/vote', messageData, header);
  
-  return response.data
+  return response.data;
 }
 
 

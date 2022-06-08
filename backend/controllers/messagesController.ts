@@ -13,6 +13,7 @@ const messages_get = async (req: Request, res: Response) => {
 
 	return Messages
 		.find({parent: null}) //? To only get top level messages
+		.find({deleted: false})
 		.limit(50)
 		.sort({'vote_count': -1})
 		.sort({'createdAt': 1})
@@ -174,7 +175,7 @@ const messages_update = (req: Request, res: Response) => {
 //? @access private
 const messages_delete = (req: Request, res: Response) => {
 	const user_id: OwnerInterface["name_id"] = req.body.user._id;
-
+	
 	logging.info('messages_delete', 'Loading messages deleting');
 
 	let message_id: MessagesInterface["id"];
@@ -182,27 +183,30 @@ const messages_delete = (req: Request, res: Response) => {
 	try {
 		message_id = new Types.ObjectId(req.params.id);
 	} catch {
-		return res.status(400).json({Message: 'Invalid parent params'})
+		return res.status(400).json({message: 'Invalid parent params'})
 	}
 
 	if(!req.body){
-    res.status(400).json({Message: 'Invalid request'});
+    res.status(400).json({message: 'Invalid request'});
   }
 
 	//TODO: Implement protection route, for validation of user
 	//? Find the user name based off the id
 	return Messages.findOne({_id: message_id})
 	.then(async (message) => {
-		if(user_id != message?.owner.name_id) {
-			return res.status(401).json({Message: `Unauthorized user - not the owner`})
-		}
-		if(message){
+		console.log('user id: ', user_id);
+		console.log('owner id: ', message?.owner.name_id)
+
+		if(message?.owner.name_id){
+			if(user_id?.toString() !== message.owner.name_id.toString()) {
+				return res.status(401).json({message: 'Unauthorized user - not the owner'})
+			}
 			message.deleted = true;
 			await message.save();
 			logging.info('messages_delete', `Message id: ${message_id} deleted`);
 			return res.status(201).json(message)
 		} else {
-			return res.status(400).json({Message: `Unknown message`})
+			return res.status(400).json({message: 'Unknown message'})
 		}
 	})
 	.catch((error) =>{

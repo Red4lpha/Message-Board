@@ -91,6 +91,28 @@ export const voteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, m
   }
 )
 
+//? Vote on a message
+export const deleteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
+  'messages/deleteMessage',
+  async ( messageData, thunkAPI: any) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await messagesService.deleteMessage(messageData, token);
+    } catch (err) {
+      let error: AxiosError<ValidationErrors> = err;
+      if(!error.message){
+        throw err;
+      }
+      const message =
+        (error.response &&
+          error.response.data) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 export const messagesSlice = createSlice ({
   name: 'message',
   initialState,
@@ -134,14 +156,26 @@ export const messagesSlice = createSlice ({
         state.isLoading = false
         state.isSuccess = true
         const {_id, votes} = action.payload
-        //console.log('id: ',_id)
-        //console.log('voteCount: ', votes.vote_count)
-        let index = state.messagesArray.findIndex(t => t._id ===_id);
-        //TODO newState might return an undefined
+        let index = state.messagesArray.findIndex(msg => msg._id ===_id);
         index !== -1 ?  
           state.messagesArray[index].votes = votes : state.isError = true
       })
       .addCase(voteMessage.rejected, (state, action: PayloadAction<any>) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(deleteMessage.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(deleteMessage.fulfilled, (state, action: PayloadAction<any> ) => {
+        state.isLoading = false
+        state.isSuccess = true
+        const {_id, deleted } = action.payload
+        deleted === true ?  
+          state.messagesArray.filter(msg => msg._id !== _id) : state.isError = true
+      })
+      .addCase(deleteMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload

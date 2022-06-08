@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../app/hooks";
-import { voteMessage } from '../features/messages/messagesSlice';
+import { deleteMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 
 const Message = (props: any) => {
@@ -16,7 +16,10 @@ const Message = (props: any) => {
     messageData.vote = -1;
     dispatch(voteMessage(messageData));
   }
-
+  const submitDelete = () => {
+    dispatch(deleteMessage(messageData));
+  }
+    
 
 
   //TODO remove the any from props
@@ -28,7 +31,10 @@ const Message = (props: any) => {
         <div className="voters" onClick={submitDownVote}>-</div>
       </div>
       <div className="content">
-        <div className="content-header">{props.userName}</div>
+        <div className="content-header">
+          <div className="content-header-name">{props.userName}</div>
+          <div className="content-header-edits" onClick={submitDelete}>X</div>
+        </div>
         <div className="message">{props.message}</div>
         <div className="message">{props.id}</div>
       </div>

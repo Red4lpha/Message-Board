@@ -17,6 +17,15 @@ section {
 div {
   padding: 10px;
 }
+.content {
+  width: 100%;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 
 .vote {
   border-right: 1px solid black;
