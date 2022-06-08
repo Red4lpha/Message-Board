@@ -69,6 +69,28 @@ export const createMessage = createAsyncThunk<{  rejectValue: ValidationErrors},
   }
 )
 
+//? Update a message
+export const updateMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
+  'messages/updateMessage',
+  async ( messageData, thunkAPI: any) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await messagesService.updateMessage(messageData, token);
+    } catch (err) {
+      let error: AxiosError<ValidationErrors> = err;
+      if(!error.message){
+        throw err;
+      }
+      const message =
+        (error.response &&
+          error.response.data) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 //? Vote on a message
 export const voteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
   'messages/voteMessage',
@@ -145,6 +167,22 @@ export const messagesSlice = createSlice ({
         state.messagesArray.push(action.payload)
       })
       .addCase(createMessage.rejected, (state, action: PayloadAction<any>) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+      .addCase(updateMessage.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updateMessage.fulfilled, (state, action: PayloadAction<any> ) => {
+        state.isLoading = false
+        state.isSuccess = true
+        const {_id, text} = action.payload
+        let index = state.messagesArray.findIndex(msg => msg._id ===_id);
+        index !== -1 ?  
+          state.messagesArray[index].text = text : state.isError = true
+      })
+      .addCase(updateMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload

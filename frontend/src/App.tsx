@@ -16,6 +16,7 @@ import Register from './components/Register';
 //TODO look into why several get calls are used in the get messages function
 //TODO deal with multiple errors with no backend connection
 //TODO not getting new lines in create_message
+//TODO handle:   code: 'ERR_HTTP_HEADERS_SENT' on the backend (got it from sending an empty update message)
 
 
 

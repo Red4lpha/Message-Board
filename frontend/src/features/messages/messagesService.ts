@@ -34,10 +34,11 @@ const replyMessage = async (userData: any) => {
 }
 
 //Update a message
-const updateMessage = async (userData: any) => {
-  const response = await axios.put(API_URL + userData.id + '/update', userData);
+const updateMessage = async (messageData: any, token: any) => {
+  const header = createTokenHeader(token);
+  const {id} = messageData;
+  const response = await axios.put(API_URL + id + '/update', messageData, header);
 
-  //TODO  update_message functionality  
   return response.data;
 }
 
@@ -47,7 +48,6 @@ const deleteMessage = async (messageData: any, token: any) => {
   const {id} = messageData;
   const response = await axios.delete(API_URL + id + '/delete', header);
 
-  //TODO delete_message functionality  
   return response.data;
 }
 

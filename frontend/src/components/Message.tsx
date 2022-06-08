@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useAppDispatch } from "../app/hooks";
-import { deleteMessage, voteMessage } from '../features/messages/messagesSlice';
+import { deleteMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 
 const Message = (props: any) => {
+  const [edit, setEdit] = useState(false);
+  const [msg, setMsg] = useState(props.message)
   const dispatch = useAppDispatch();
   const messageData: messagesDataInterface = {
     id: props.id
+  }
+  const onChange = (e: any) => {
+    setMsg(e.target.value);
   }
 
   const submitUpVote = () => {
@@ -18,6 +24,13 @@ const Message = (props: any) => {
   }
   const submitDelete = () => {
     dispatch(deleteMessage(messageData));
+  }
+  const submitEdit = () => {
+    if(edit) {
+      messageData.text = msg;
+      dispatch(updateMessage(messageData))
+    }
+    setEdit(!edit);
   }
     
 
@@ -33,9 +46,18 @@ const Message = (props: any) => {
       <div className="content">
         <div className="content-header">
           <div className="content-header-name">{props.userName}</div>
-          <div className="content-header-edits" onClick={submitDelete}>X</div>
+          <div className="content-header-edits" >
+            <span onClick={submitEdit}>Edit</span>
+            <span onClick={submitDelete}>X</span>
+          </div>
         </div>
-        <div className="message">{props.message}</div>
+        {!edit ? <div className="message">{props.message}</div> :
+        <input type='text'
+        value={msg}
+        onChange={(e) => setMsg(e.target.value)} 
+        />
+        }
+        
         <div className="message">{props.id}</div>
       </div>
     </section>

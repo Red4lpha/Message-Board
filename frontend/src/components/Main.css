@@ -26,6 +26,9 @@ div {
   justify-content: space-between;
   width: 100%;
 }
+.content-header-edits span {
+  padding: 0 5px;
+}
 
 .vote {
   border-right: 1px solid black;

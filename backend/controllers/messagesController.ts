@@ -152,10 +152,11 @@ const messages_update = (req: Request, res: Response) => {
 	//? Find the user name based off the id
 	return Messages.findOne({_id: message_id})
 	.then(async (message) => {
-		if(user_id != message?.owner.name_id) {
-			return res.status(401).json({Message: `Unauthorized user - not the owner`})
-		}
-		if(message){
+	
+		if(message?.owner.name_id){
+			if(user_id?.toString() !== message.owner.name_id.toString()) {
+				return res.status(401).json({message: 'Unauthorized user - not the owner'})
+			}
 			message.text = text;
 			await message.save();
 			logging.info('messages_update', `Message id: ${message_id} updated`)
@@ -194,8 +195,6 @@ const messages_delete = (req: Request, res: Response) => {
 	//? Find the user name based off the id
 	return Messages.findOne({_id: message_id})
 	.then(async (message) => {
-		console.log('user id: ', user_id);
-		console.log('owner id: ', message?.owner.name_id)
 
 		if(message?.owner.name_id){
 			if(user_id?.toString() !== message.owner.name_id.toString()) {
