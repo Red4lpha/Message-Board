@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useAppDispatch } from "../app/hooks";
-import { deleteMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
+import { deleteMessage, replyMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 
 const Message = (props: any) => {
   const [edit, setEdit] = useState(false);
-  const [msg, setMsg] = useState(props.message)
+  const [msg, setMsg] = useState(props.message);
+  const [reply, setReply] = useState("");
+  const [isReplying, setIsReplying] = useState(false); 
   const dispatch = useAppDispatch();
   const messageData: messagesDataInterface = {
     id: props.id
-  }
-  const onChange = (e: any) => {
-    setMsg(e.target.value);
   }
 
   const submitUpVote = () => {
@@ -32,6 +31,11 @@ const Message = (props: any) => {
     }
     setEdit(!edit);
   }
+  
+  const submitReply = () => {
+    messageData.text = reply;
+    dispatch(replyMessage(messageData))
+  }
     
 
 
@@ -48,6 +52,7 @@ const Message = (props: any) => {
           <div className="content-header-name">{props.userName}</div>
           <div className="content-header-edits" >
             <span onClick={submitEdit}>Edit</span>
+            <span onClick={() => setIsReplying(!isReplying)}>Reply</span>
             <span onClick={submitDelete}>X</span>
           </div>
         </div>
@@ -55,11 +60,19 @@ const Message = (props: any) => {
         <input type='text'
         value={msg}
         onChange={(e) => setMsg(e.target.value)} 
-        />
-        }
+        />}
         
         <div className="message">{props.id}</div>
       </div>
+      {isReplying ? 
+        <div className="reply-message">
+        <input type='text'
+        value={reply}
+        onChange={(e) => setReply(e.target.value)} /> 
+        <span onClick={submitReply}>Submit Reply</span>
+        </div>
+        : <></>
+      }
     </section>
   )
 }

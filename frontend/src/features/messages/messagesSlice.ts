@@ -70,6 +70,28 @@ export const createMessage = createAsyncThunk<{  rejectValue: ValidationErrors},
 )
 
 //? Update a message
+export const replyMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
+  'messages/replyMessage',
+  async ( messageData, thunkAPI: any) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token
+      return await messagesService.replyMessage(messageData, token);
+    } catch (err) {
+      let error: AxiosError<ValidationErrors> = err;
+      if(!error.message){
+        throw err;
+      }
+      const message =
+        (error.response &&
+          error.response.data) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+//? Update a message
 export const updateMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
   'messages/updateMessage',
   async ( messageData, thunkAPI: any) => {
@@ -113,7 +135,7 @@ export const voteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, m
   }
 )
 
-//? Vote on a message
+//? Delete a message
 export const deleteMessage = createAsyncThunk<{  rejectValue: ValidationErrors}, messagesDataInterface>(
   'messages/deleteMessage',
   async ( messageData, thunkAPI: any) => {

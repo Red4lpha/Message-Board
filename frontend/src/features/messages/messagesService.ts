@@ -26,10 +26,11 @@ const createMessage = async (messageData: any, token: any) => {
 }
 
 //Post a message reply
-const replyMessage = async (userData: any) => {
-  const response = await axios.post(API_URL + userData.id + '/create', userData);
+const replyMessage = async (messageData: any, token: any) => {
+  const header = createTokenHeader(token);
+  const {id} = messageData;
+  const response = await axios.post(API_URL + id + '/create', messageData, header);
 
-  //TODO reply_message functionality  
   return response.data;
 }
 
