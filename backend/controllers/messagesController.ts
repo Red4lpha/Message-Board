@@ -12,7 +12,7 @@ const messages_get = async (req: Request, res: Response) => {
 	logging.info('messages_get', 'Loading messages displaying');
 
 	return Messages
-		.find({parent: null}) //? To only get top level messages
+		//.find({parent: null}) //? To only get top level messages
 		.find({deleted: false})
 		.limit(50)
 		.sort({'vote_count': -1})

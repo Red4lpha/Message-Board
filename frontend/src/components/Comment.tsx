@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "../app/hooks";
 import { deleteMessage, replyMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 
-const Message = (props: any) => {
+const Comment = (props: any) => {
   const [edit, setEdit] = useState(false);
   const [msg, setMsg] = useState(props.message);
   const [reply, setReply] = useState("");
@@ -36,12 +36,18 @@ const Message = (props: any) => {
     messageData.text = reply;
     dispatch(replyMessage(messageData))
   }
+  useEffect(() => {
+    /* console.log(`child array for: ${props.id}`)
+    props.childArray.length > 0 ? console.log(props.childArray) : 
+    console.log("no child")
+    console.log('---------------------') */
+  })
     
 
 
   //TODO remove the any from props
   return (
-    <section>
+    <div className="msg-container">
       <div className="vote">
         <div className="voters" onClick={submitUpVote}>+</div>
         <div className="vote-count">{props.voteCount} </div>
@@ -63,6 +69,7 @@ const Message = (props: any) => {
         />}
         
         <div className="message">{props.id}</div>
+        {/* <div>{props.childArray}</div> */}
       </div>
       {isReplying ? 
         <div className="reply-message">
@@ -73,8 +80,8 @@ const Message = (props: any) => {
         </div>
         : <></>
       }
-    </section>
+    </div>
   )
 }
 
-export default Message
+export default Comment
