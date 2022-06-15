@@ -5,7 +5,9 @@ export interface userDataInterface {
 }
 
 export interface messagesDataInterface {
-  text?: string,
   id?: string,
+  text?: string,
+  owner?: string,
   vote?: number,
+  childArray?: any[]
 }

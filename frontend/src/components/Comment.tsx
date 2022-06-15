@@ -3,14 +3,14 @@ import { useAppDispatch } from "../app/hooks";
 import { deleteMessage, replyMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 
-const Comment = (props: any) => {
+const Comment = ({id, owner, vote, text}:messagesDataInterface) => {
   const [edit, setEdit] = useState(false);
-  const [msg, setMsg] = useState(props.message);
+  const [msg, setMsg] = useState(text);
   const [reply, setReply] = useState("");
   const [isReplying, setIsReplying] = useState(false); 
   const dispatch = useAppDispatch();
   const messageData: messagesDataInterface = {
-    id: props.id
+    id: id
   }
 
   const submitUpVote = () => {
@@ -50,25 +50,25 @@ const Comment = (props: any) => {
     <div className="msg-container">
       <div className="vote">
         <div className="voters" onClick={submitUpVote}>+</div>
-        <div className="vote-count">{props.voteCount} </div>
+        <div className="vote-count">{vote} </div>
         <div className="voters" onClick={submitDownVote}>-</div>
       </div>
       <div className="content">
         <div className="content-header">
-          <div className="content-header-name">{props.userName}</div>
+          <div className="content-header-name">{owner}</div>
           <div className="content-header-edits" >
             <span onClick={submitEdit}>Edit</span>
             <span onClick={() => setIsReplying(!isReplying)}>Reply</span>
             <span onClick={submitDelete}>X</span>
           </div>
         </div>
-        {!edit ? <div className="message">{props.message}</div> :
+        {!edit ? <div className="message">{text}</div> :
         <input type='text'
         value={msg}
         onChange={(e) => setMsg(e.target.value)} 
         />}
         
-        <div className="message">{props.id}</div>
+        <div className="message">{id}</div>
         {/* <div>{props.childArray}</div> */}
       </div>
       {isReplying ? 

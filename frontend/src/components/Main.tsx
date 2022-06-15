@@ -4,7 +4,8 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {  getMessages, reset } from '../features/messages/messagesSlice';
 import LinearLoader from './LinearLoader';
 import Post from './Post';
-import Comment from './Comment';
+//import Comment from './Comment';
+import CommentContainer from './CommentContainer';
 
 
 const Main = () => {
@@ -30,11 +31,6 @@ const Main = () => {
     }
   },[dispatch, isError, message])
 
-  const sortChildren = (id: any): any[] => {
-    const obj = childArray.filter(o => o.ancestors.find((ob: any) => ob === id ));
-    return obj;
-  }
-
   if (isLoading) {
     return (
     <main>
@@ -55,25 +51,14 @@ const Main = () => {
         <>
           {messagesArray.filter(msg => msg.parent === null).map((msg: any, index) => (
               <section>
-                <Comment
+                <CommentContainer
                 key={msg._id}
                 id={msg._id}
-                userName={msg.owner.name}
-                voteCount={msg.votes.vote_count}
-                message={msg.text}
+                owner={msg.owner.name}
+                vote={msg.votes.vote_count}
+                text={msg.text}
+                childArray={childArray}
                 />
-                
-                {sortChildren(msg._id).map((child: any) => (
-                  <div className='child'>
-                  <Comment
-                  key={child._id}
-                  id={child._id}
-                  userName={child.owner.name}
-                  voteCount={child.votes.vote_count}
-                  message={child.text}
-                  />
-                  </div>
-                ))}
               </section>
           ))}
         </>  
