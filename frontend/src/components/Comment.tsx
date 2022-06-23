@@ -3,7 +3,15 @@ import { useAppDispatch } from "../app/hooks";
 import { deleteMessage, replyMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 
-const Comment = ({id, owner, vote, text}:messagesDataInterface) => {
+interface CommentProps {
+  id: messagesDataInterface['id'];
+  owner: messagesDataInterface['owner']; 
+  vote: messagesDataInterface['vote'];
+  text:messagesDataInterface['text'];
+  submitReply: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+}
+
+const Comment = ({id, owner, vote, text, submitReply}:CommentProps) => {
   const [edit, setEdit] = useState(false);
   const [msg, setMsg] = useState(text);
   const [reply, setReply] = useState("");
@@ -32,10 +40,6 @@ const Comment = ({id, owner, vote, text}:messagesDataInterface) => {
     setEdit(!edit);
   }
   
-  const submitReply = () => {
-    messageData.text = reply;
-    dispatch(replyMessage(messageData))
-  }
   useEffect(() => {
     /* console.log(`child array for: ${props.id}`)
     props.childArray.length > 0 ? console.log(props.childArray) : 
@@ -76,7 +80,7 @@ const Comment = ({id, owner, vote, text}:messagesDataInterface) => {
         <input type='text'
         value={reply}
         onChange={(e) => setReply(e.target.value)} /> 
-        <span onClick={submitReply}>Submit Reply</span>
+        <span onClick={(e) => submitReply(reply, e)}>Submit Reply</span>
         </div>
         : <></>
       }

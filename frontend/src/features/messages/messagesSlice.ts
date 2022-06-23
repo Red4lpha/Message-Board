@@ -13,7 +13,8 @@ interface initialStateInterface {
   isSuccess: boolean,
   isLoading: boolean,
   message: string,
-  messagesArray: any[]
+  messagesArray: any[],
+  replyMessage: any
 }
 
 //? Get user from localStorage
@@ -23,7 +24,8 @@ const initialState: initialStateInterface = {
   isSuccess: false,
   isLoading: false,
   message: '',
-  messagesArray: []
+  messagesArray: [],
+  replyMessage: null
 }
 
 //? Get all the messages
@@ -191,6 +193,22 @@ export const messagesSlice = createSlice ({
       .addCase(createMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.message = action.payload
+      })
+      .addCase(replyMessage.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(replyMessage.fulfilled, (state, action: PayloadAction<any> ) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.messagesArray.push(action.payload)
+        //TODO: is this needed anymore?
+        state.replyMessage = action.payload
+      })
+      .addCase(replyMessage.rejected, (state, action: PayloadAction<any>) => {
+        state.isLoading = false
+        state.isError = true
+        state.replyMessage = null
         state.message = action.payload
       })
       .addCase(updateMessage.pending, (state) => {

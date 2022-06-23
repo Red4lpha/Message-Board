@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "../app/hooks";
-//import { replyMessage} from '../features/messages/messagesSlice';
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { replyMessage} from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import Comment from './Comment';
 
 const CommentContainer = ({id, owner, vote, text, childArray}:messagesDataInterface) => {
-  //const dispatch = useAppDispatch();
-/*   const messageData: messagesDataInterface = {
+  //const [reply, setReply] = useState("");
+  const dispatch = useAppDispatch();
+  //const {replyMessage} = useAppSelector((state) => state.messages)
+  const messageData: messagesDataInterface = {
     id: id
-  } */
+  } 
   const sortSuccessors = (id: any): any[] => {
     let obj = [];
     if (childArray)  obj = childArray.filter((o:any) => o.ancestors.find((ob: any) => ob === id ));
     return obj;
   }
 
-  const submitReply = () => {
-/*     messageData.text = reply;
-    dispatch(replyMessage(messageData)) */
+  const submitReply = (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    messageData.text = reply;
+    dispatch(replyMessage(messageData)) 
+    //childArray.push(replyMessage)
   }
   useEffect(() => {
  /*    console.log(`child array for: ${id}`)
@@ -37,6 +40,7 @@ const CommentContainer = ({id, owner, vote, text, childArray}:messagesDataInterf
         owner={owner}
         vote={vote}
         text={text}
+        submitReply={submitReply}
         />
       {sortSuccessors(id).filter(child=> child.parent === id).map((child) => (
         <div className="child">
