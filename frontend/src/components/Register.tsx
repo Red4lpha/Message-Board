@@ -46,7 +46,7 @@ const Register = () => {
   return (
     <div className="App">
       <Paper>
-        <h1>Hello</h1>
+        <h1>REGISTER</h1>
         <div style={{marginBottom: '15px'}}>
           <FormControl>
             <InputLabel htmlFor="name">Name</InputLabel>

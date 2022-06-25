@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import { useAppDispatch } from '../app/hooks';
-import { login, logout} from '../features/auth/authSlice'
+import { login} from '../features/auth/authSlice'
 import { userDataInterface } from '../types/types';
 import {FormControl, InputLabel, Input, Button, Paper} from '@mui/material';
 
@@ -29,14 +29,10 @@ const Login = () => {
     }))
   }
 
-  const handleLogout = () => {
-    dispatch(logout())
-  }
-
   return (
     <div className="App">
     <Paper>
-      <h1>Hello</h1>
+      <h1>LOGIN</h1>
       <div style={{marginBottom: '15px'}}>
         <FormControl>
           <InputLabel htmlFor="email">Email address</InputLabel>
@@ -58,7 +54,6 @@ const Login = () => {
         </FormControl>
       </div>
       <Button onClick={handleSubmit}>LOGIN</Button>
-      <Button onClick={handleLogout}>LOGOUT</Button>
     </Paper>
   </div>
   )

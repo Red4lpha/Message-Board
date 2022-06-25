@@ -9,7 +9,7 @@ interface ValidationErrors {
 }
 
 interface initialStateInterface {
-  user: string | null,
+  user: userDataInterface | null,
   isError: boolean,
   isSuccess: boolean,
   isLoading: boolean,
