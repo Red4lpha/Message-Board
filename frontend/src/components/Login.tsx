@@ -1,10 +1,11 @@
-import {FormEvent, useState} from 'react';
-import { useAppDispatch } from '../app/hooks';
-import { login} from '../features/auth/authSlice'
+import {FormEvent, useEffect, useState} from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { login, reset} from '../features/auth/authSlice'
 import { userDataInterface } from '../types/types';
-import {Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container } from '@mui/material';
+import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
@@ -13,7 +14,8 @@ const Login = () => {
     email: '',
     password: ''
   });
-
+  const {user, isLoading, isSuccess, isError, message} = useAppSelector((state) => state.auth)
+  const navigate = useNavigate();
   const {email, password} = formData;
   const dispatch = useAppDispatch();
 
@@ -33,6 +35,17 @@ const Login = () => {
       [e.target.name]: e.target.value,
     }))
   }
+  useEffect(() => {
+    if (isError) {
+      console.log(message)
+    }
+
+    if (isSuccess || user) {
+      navigate('/')
+    }
+
+    dispatch(reset())
+  }, [user, isError, isSuccess, message, navigate, dispatch])
 
   return (
     <ThemeProvider theme={theme}>

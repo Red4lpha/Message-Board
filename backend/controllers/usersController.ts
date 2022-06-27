@@ -50,7 +50,9 @@ const users_create = [
           //? Return the info back
           //TODO remove returning back the password and non-needed fields
           return res.status(201).json({
-            user,
+            _id: user.id,
+            name: user.name,
+            email: user.email,
             token: generateToken(user._id)
           })
         }
