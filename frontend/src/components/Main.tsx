@@ -50,7 +50,7 @@ const Main = () => {
       {messagesArray.length ? (
         <>
           {messagesArray.filter(msg => msg.parent === null).map((msg: any, index) => (
-              <section>
+              <article>
                 <CommentContainer
                 key={msg._id}
                 id={msg._id}
@@ -59,7 +59,7 @@ const Main = () => {
                 text={msg.text}
                 childArray={childArray}
                 />
-              </section>
+              </article>
           ))}
         </>  
       ) : (

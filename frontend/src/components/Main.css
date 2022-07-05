@@ -1,50 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap');
+:root {
+  --font-4xl: 3.157rem;
+  --font-3xl: 2.369rem;
+  --font-2xl: 1.777rem;
+  --font-xl:  1.333rem;
+  --font-base:1rem;
+  --font-xs:  .75rem;
+  --font-2xs: .563rem;
+
+  --Mobile: 375px;
+  --Desktop: 1440px;
+  
+  /* Primary Colors */
+  --primary-blue: hsl(238, 40%, 52%);
+  --primary-red: hsl(358, 79%, 66%);
+  --primary-blue-hover: hsl(239, 57%, 85%);
+  --primary-red-hover: hsl(357, 100%, 86%);
+  
+  /* Neutral Colors */
+  --neutral-blue: hsl(212, 24%, 26%);
+  --neutral-blue-hover: hsl(211, 10%, 45%);
+  --neutral-gray: hsl(223, 19%, 93%);
+  --neutral-gray-hover: hsl(228, 33%, 97%);
+  --neutral-white: hsl(0, 0%, 100%);
+}
+
+/* ------------Browser Style Reset--------------- */
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+/* ------------Browser Style Reset--------------- */
+
+
+
+body {
+  background-color: var(--neutral-gray-hover);
+  font-family: 'Rubik', 'Courier New', Courier, monospace;
+}
+
 main {
   display: flex;
   flex-direction: column;
   margin: 30px auto;
   width: 600px;
-  border: 1px solid black;
 }
 
+/* ------------Comment Style--------------- */
 .msg-container {
-  display: flex;
-  flex-direction: row;
-  border: 1px solid red;
-  background-color: aqua;
-  margin: 15px 0;
+  width: 600px;
+  background-color: var(--neutral-white);
+  margin: 5px 0;
   text-align: left;
+  border-radius: 5px;
+  padding: 18px;
+  border: 3px solid black;
+  display: grid;
+  grid-template-columns: max-content repeat(3, auto);
+  grid-template-rows: 38px max-content;
+  grid-gap: 15px;
+  align-items: center;
+
 }
-main div {
+
+/* div{
   padding: 10px;
-}
-.content {
-  width: 100%;
-}
+} */
 
-.content-header {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-.content-header-edits span {
-  padding: 0 5px;
-}
-
-.vote {
-  border-right: 1px solid black;
+/* ------------Comment Vote Section Style--------------- */
+section.vote {
   text-align: center;
-  font-size: large;
+  font-size: var(--font-xl);
+  background-color: var(--neutral-gray-hover);
+  border-radius: 10px;
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  font-weight: 500;
+  align-self: flex-start;
+  /* padding: 7px 12px; */
 }
 .vote > * {
-  padding: 5px;
+  color: var(--primary-blue);
+  fill: var(--neutral-blue-hover);
 }
-.voters {
-  border: 1px solid black;
-  border-radius: 30%;
-  padding: 5px;
+.vote-btn {
+  padding: 7px 12px;
 }
-.voters:hover {
-  background-color: limegreen;
+
+.vote-btn:hover {
+  background-color: var(--neutral-gray-hover);
+  cursor: pointer;
+}
+
+/* ------------Comment Header Section Style--------------- */
+section.header {
+  grid-column-start: 2;
+  display: inline-flex;
+  align-items: center;
+}
+.header-avatar {
+  padding-right: 20px;
+}
+.header-avatar img {
+  width: 35px;
+}
+h2.header-name {
+  display: inline;
+  font-size: var(--font-base);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ------------Comment Edit Section Style--------------- */
+section.edit {
+  grid-column-end: 5;
+  justify-self: right;
+}
+
+
+/* ------------Comment Edit Section Style--------------- */
+section.content {
+  grid-column: 2 / span 3;
+  grid-row-start: 2;
+  align-self: flex-start;
+  color: var(--neutral-blue-hover);
 }
 
 .message {
