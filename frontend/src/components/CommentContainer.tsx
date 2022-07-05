@@ -4,7 +4,7 @@ import { replyMessage} from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import Comment from './Comment';
 
-const CommentContainer = ({id, owner, vote, text, childArray}:messagesDataInterface) => {
+const CommentContainer = ({id, owner, ownerId, vote, text, childArray}:messagesDataInterface) => {
   //const [reply, setReply] = useState("");
   const dispatch = useAppDispatch();
   //const {replyMessage} = useAppSelector((state) => state.messages)
@@ -38,6 +38,7 @@ const CommentContainer = ({id, owner, vote, text, childArray}:messagesDataInterf
       <Comment
         id={id}
         owner={owner}
+        ownerId={ownerId}
         vote={vote}
         text={text}
         submitReply={submitReply}

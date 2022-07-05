@@ -55,6 +55,7 @@ const Main = () => {
                 key={msg._id}
                 id={msg._id}
                 owner={msg.owner.name}
+                ownerId={msg.owner.name_id}
                 vote={msg.votes.vote_count}
                 text={msg.text}
                 childArray={childArray}

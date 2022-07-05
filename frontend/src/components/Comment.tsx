@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { deleteMessage, replyMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import plus from '../assets/icon-plus.svg';
@@ -12,17 +12,19 @@ import deleteIcon from '../assets/icon-delete.svg';
 interface CommentProps {
   id: messagesDataInterface['id'];
   owner: messagesDataInterface['owner']; 
+  ownerId: messagesDataInterface['ownerId'];
   vote: messagesDataInterface['vote'];
   text:messagesDataInterface['text'];
   submitReply: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-const Comment = ({id, owner, vote, text, submitReply}:CommentProps) => {
+const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => {
   const [edit, setEdit] = useState(false);
   const [msg, setMsg] = useState(text);
   const [reply, setReply] = useState("");
   const [isReplying, setIsReplying] = useState(false); 
   const dispatch = useAppDispatch();
+  const authUserId = useAppSelector((state) => state.auth.user?._id);
   const messageData: messagesDataInterface = {
     id: id
   }
@@ -76,18 +78,23 @@ const Comment = ({id, owner, vote, text, submitReply}:CommentProps) => {
       </section>
 
       <section className="edit" >
-        <span onClick={submitEdit}>
-          Edit
-          <img src={editIcon} alt="edit post icon"/>
+        {(authUserId === ownerId) ? 
+          <>
+            <span className="edit-delete" onClick={submitDelete}>
+              <img src={deleteIcon} alt="delete post icon"/>
+              <span className="edit-text">Delete</span> 
+            </span>
+            <span onClick={submitEdit}>
+              <img src={editIcon} alt="edit post icon"/>
+              <span className="edit-text">Edit</span>  
+            </span>
+          </>
+          :
+          <span onClick={() => setIsReplying(!isReplying)}>
+            <img src={replyIcon} alt="reply to post icon"/>
+            <span className="edit-text">Reply</span> 
           </span>
-        <span onClick={() => setIsReplying(!isReplying)}>
-          Reply
-          <img src={replyIcon} alt="reply to post icon"/>
-          </span>
-        <span onClick={submitDelete}>
-          Delete
-          <img src={deleteIcon} alt="delete post icon"/>
-        </span>
+        }
       </section>
 
       <section className="content">

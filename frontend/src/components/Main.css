@@ -134,7 +134,17 @@ h2.header-name {
 section.edit {
   grid-column-end: 5;
   justify-self: right;
+  font-weight: 500;
+  color: var(--primary-blue);
 }
+.edit img {
+  padding-right: 5px;
+}
+.edit-delete {
+  padding-right: 20px;
+  color: var(--primary-red);
+}
+
 
 
 /* ------------Comment Edit Section Style--------------- */

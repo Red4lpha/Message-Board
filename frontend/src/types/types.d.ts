@@ -10,6 +10,7 @@ export interface messagesDataInterface {
   id?: string,
   text?: string,
   owner?: string,
+  ownerId?: string,
   vote?: number,
   childArray?: any[]
 }
