@@ -36,6 +36,7 @@ const CommentContainer = ({id, owner, ownerId, vote, text, childArray}:messagesD
   return (
     <>
       <Comment
+        key={id}
         id={id}
         owner={owner}
         ownerId={ownerId}
@@ -49,6 +50,7 @@ const CommentContainer = ({id, owner, ownerId, vote, text, childArray}:messagesD
           key={child._id}
           id={child._id}
           owner={child.owner.name}
+          ownerId={child.owner.name_id}
           vote={child.votes.vote_count}
           text={child.text}
           childArray={sortSuccessors(id)}

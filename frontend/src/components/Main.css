@@ -64,22 +64,24 @@ main {
   margin: 30px auto;
   width: 600px;
 }
-
-/* ------------Comment Style--------------- */
-.msg-container {
+/* ------------Reusable components--------------- */
+.container-style {
   width: 600px;
   background-color: var(--neutral-white);
   margin: 5px 0;
   text-align: left;
   border-radius: 5px;
   padding: 18px;
-  border: 3px solid black;
+  /* border: 3px solid black; */
+}
+
+/* ------------Comment Style--------------- */
+.comment-container {
   display: grid;
   grid-template-columns: max-content repeat(3, auto);
   grid-template-rows: 38px max-content;
   grid-gap: 15px;
   align-items: center;
-
 }
 
 /* div{
@@ -128,6 +130,15 @@ h2.header-name {
   font-size: var(--font-base);
   margin: 0;
   font-weight: 500;
+  padding-right: 15px;
+}
+.header-you {
+  background-color: var(--primary-blue);
+  font-weight: 500;
+  color: var(--neutral-white);
+  padding: 5px;
+  border-radius: 3px;
+  font-size: var(--font-xs);
 }
 
 /* ------------Comment Edit Section Style--------------- */
@@ -139,6 +150,9 @@ section.edit {
 }
 .edit img {
   padding-right: 5px;
+}
+.edit span {
+  cursor: pointer;
 }
 .edit-delete {
   padding-right: 20px;
@@ -157,4 +171,42 @@ section.content {
 
 .message {
   white-space: pre-line;
+}
+
+/* ------------Post New Comment Style--------------- */
+.post-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.post-avatar {
+  width: 40px;
+}
+.post-btn {
+  color: var(--neutral-white);
+  background-color: var(--primary-blue);
+  padding: 10px 25px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.post-btn:hover {
+  background-color: var(--primary-blue-hover);
+}
+
+
+.post-form {
+  width: 100%;
+  padding: 0 15px;
+}
+.post-form textarea {
+  width: 100%;
+  display: block;
+  resize: none;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 5px;
+}
+.post-form textarea:focus {
+  outline: none !important;
+  border-color: var(--primary-blue);
 }

@@ -59,7 +59,7 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
 
   //TODO remove the any from props
   return (
-    <div className="msg-container">
+    <div className="comment-container container-style">
       <section className="vote">
         <div className="vote-btn" onClick={submitUpVote}>
           <img src={plus} alt="positive up vote"/>
@@ -75,6 +75,7 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
           <img src={avatar} alt="avatar icon"/>
         </span>
         <h2 className="header-name">{owner}</h2>
+        {(authUserId === ownerId) ? <span className="header-you">you</span> :<></> }
       </section>
 
       <section className="edit" >

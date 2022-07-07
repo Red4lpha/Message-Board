@@ -18,7 +18,7 @@ import Register from './components/Register';
 //TODO deal with multiple errors with no backend connection
 //TODO not getting new lines in create_message
 //TODO handle:   code: 'ERR_HTTP_HEADERS_SENT' on the backend (got it from sending an empty update message)
-
+//TODO if the user is signed out, then reply should prompt the user to sign in
 
 
 function App() {

@@ -6,6 +6,7 @@ import LinearLoader from './LinearLoader';
 import Post from './Post';
 //import Comment from './Comment';
 import CommentContainer from './CommentContainer';
+import NewPost from './NewPost';
 
 
 const Main = () => {
@@ -66,7 +67,7 @@ const Main = () => {
       ) : (
         <h2>No Replies Yet</h2>
       )}
-      <Post /> 
+      <NewPost /> 
     </main>
   )
 }
