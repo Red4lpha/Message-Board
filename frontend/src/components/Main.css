@@ -62,17 +62,44 @@ main {
   display: flex;
   flex-direction: column;
   margin: 30px auto;
-  width: 600px;
+  width: 700px;
 }
+
+
 /* ------------Reusable components--------------- */
 .container-style {
-  width: 600px;
+  /* width: 600px; */
   background-color: var(--neutral-white);
   margin: 5px 0;
   text-align: left;
   border-radius: 5px;
   padding: 18px;
   /* border: 3px solid black; */
+}
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--neutral-white);
+  background-color: var(--primary-blue);
+  height: 40px;
+  width: 100px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: var(--primary-blue-hover);
+}
+textarea {
+  display: block;
+  resize: none;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 5px;
+}
+textarea:focus {
+  outline: none !important;
+  border-color: var(--primary-blue);
 }
 
 /* ------------Comment Style--------------- */
@@ -161,7 +188,7 @@ section.edit {
 
 
 
-/* ------------Comment Edit Section Style--------------- */
+/* ------------Comment Message Section Style--------------- */
 section.content {
   grid-column: 2 / span 3;
   grid-row-start: 2;
@@ -173,6 +200,11 @@ section.content {
   white-space: pre-line;
 }
 
+.content-update-btn {
+  margin-top: 20px;
+  float: right;
+}
+
 /* ------------Post New Comment Style--------------- */
 .post-container {
   display: flex;
@@ -182,31 +214,8 @@ section.content {
 .post-avatar {
   width: 40px;
 }
-.post-btn {
-  color: var(--neutral-white);
-  background-color: var(--primary-blue);
-  padding: 10px 25px;
-  border-radius: 5px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.post-btn:hover {
-  background-color: var(--primary-blue-hover);
-}
-
 
 .post-form {
-  width: 100%;
+  flex-grow: 1;
   padding: 0 15px;
-}
-.post-form textarea {
-  width: 100%;
-  display: block;
-  resize: none;
-  border: 1px solid var(--neutral-gray);
-  border-radius: 5px;
-}
-.post-form textarea:focus {
-  outline: none !important;
-  border-color: var(--primary-blue);
 }

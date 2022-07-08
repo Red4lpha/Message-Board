@@ -43,7 +43,7 @@ const NewPost = () => {
           {text}
         </textarea>
       </div>
-      <div className="post-btn btn" onClick={handleSubmit}>SEND</div>
+      <div className="post-btn btn" onClick={handleSubmit}><span className='btn-text'>SEND</span></div>
     </section>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { deleteMessage, replyMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
@@ -23,6 +23,9 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
   const [msg, setMsg] = useState(text);
   const [reply, setReply] = useState("");
   const [isReplying, setIsReplying] = useState(false); 
+  const [msgHeight, setMsgHeight] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const msgRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const authUserId = useAppSelector((state) => state.auth.user?._id);
   const messageData: messagesDataInterface = {
@@ -40,6 +43,12 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
   const submitDelete = () => {
     dispatch(deleteMessage(messageData));
   }
+  const triggerEdit = () => {
+    if(edit){
+      setMsg(text);
+    } 
+    setEdit(!edit);
+  }
   const submitEdit = () => {
     if(edit) {
       messageData.text = msg;
@@ -49,14 +58,47 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
   }
   
   useEffect(() => {
-    /* console.log(`child array for: ${props.id}`)
-    props.childArray.length > 0 ? console.log(props.childArray) : 
-    console.log("no child")
-    console.log('---------------------') */
-  })
-    
+    if (msgRef.current?.clientHeight) {
+      setMsgHeight(msgRef.current?.clientHeight);
+    }
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = msgHeight + "px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+    const handleClickOutside = (event: any) => {
+      if (textareaRef.current && !textareaRef.current.contains(event.target)) {
+        triggerEdit();
+      }
+    }
+    const handleEscPress = (event: any) => {
+      if (textareaRef.current && event.key === 'Escape') {
+        triggerEdit();
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscPress);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleClickOutside);
+    };
 
 
+
+  }, [msg, msgHeight, triggerEdit]);
+
+  const styles: { [name: string]: React.CSSProperties } = {
+  
+    textareaDefaultStyle: {
+      padding: "8px 15px",
+      width: "100%",
+      height: (msgHeight+16) + "px",
+      display: "block",
+      resize: "none",
+      fontFamily: "'Rubik', 'Courier New', Courier, monospace",
+    },
+  };
   //TODO remove the any from props
   return (
     <div className="comment-container container-style">
@@ -85,7 +127,7 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
               <img src={deleteIcon} alt="delete post icon"/>
               <span className="edit-text">Delete</span> 
             </span>
-            <span onClick={submitEdit}>
+            <span onClick={triggerEdit}>
               <img src={editIcon} alt="edit post icon"/>
               <span className="edit-text">Edit</span>  
             </span>
@@ -99,14 +141,20 @@ const Comment = ({id, owner, ownerId, vote, text, submitReply}:CommentProps) => 
       </section>
 
       <section className="content">
-        {!edit ? <div className="message">{text}</div> :
-        <input type='text'
-        value={msg}
-        onChange={(e) => setMsg(e.target.value)} 
-        />}
-        
-        <div className="message">{id}</div>
-        {/* <div>{props.childArray}</div> */}
+        {!edit ? 
+        <div className="message" ref={msgRef}>{msg}</div> 
+        : <>
+          <textarea ref={textareaRef} 
+          onChange={(e) => setMsg(e.target.value)} 
+          style={styles.textareaDefaultStyle}
+          value={msg}
+          / >
+          <div className="content-update-btn btn" onClick={submitEdit}>
+            <span className="btn-text">UPDATE</span>
+          </div>  
+        </>
+        }
+
         {isReplying ? 
           <div className="reply-message">
           <input type='text'
