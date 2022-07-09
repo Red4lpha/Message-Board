@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useEffect } from "react";
+import { useAppDispatch } from "../app/hooks";
 import { replyMessage} from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import Comment from './Comment';
 
-const CommentContainer = ({id, owner, ownerId, vote, text, childArray}:messagesDataInterface) => {
+const CommentContainer = ({id, owner, ownerId, vote, text, updatedAt, childArray}:messagesDataInterface) => {
   //const [reply, setReply] = useState("");
   const dispatch = useAppDispatch();
   //const {replyMessage} = useAppSelector((state) => state.messages)
@@ -42,6 +42,7 @@ const CommentContainer = ({id, owner, ownerId, vote, text, childArray}:messagesD
         ownerId={ownerId}
         vote={vote}
         text={text}
+        updatedAt={updatedAt}
         submitReply={submitReply}
         />
       {sortSuccessors(id).filter(child=> child.parent === id).map((child) => (
@@ -53,6 +54,7 @@ const CommentContainer = ({id, owner, ownerId, vote, text, childArray}:messagesD
           ownerId={child.owner.name_id}
           vote={child.votes.vote_count}
           text={child.text}
+          updatedAt={child.updatedAt}
           childArray={sortSuccessors(id)}
         />
         </div>

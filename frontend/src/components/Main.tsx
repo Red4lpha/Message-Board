@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import './Main.css';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import {  getMessages, reset } from '../features/messages/messagesSlice';
+import {  getMessages } from '../features/messages/messagesSlice';
 import LinearLoader from './LinearLoader';
-import Post from './Post';
+//import Post from './Post';
 //import Comment from './Comment';
 import CommentContainer from './CommentContainer';
 import NewPost from './NewPost';
@@ -59,6 +59,7 @@ const Main = () => {
                 ownerId={msg.owner.name_id}
                 vote={msg.votes.vote_count}
                 text={msg.text}
+                updatedAt={msg.updatedAt}
                 childArray={childArray}
                 />
               </article>
@@ -67,7 +68,7 @@ const Main = () => {
       ) : (
         <h2>No Replies Yet</h2>
       )}
-      <NewPost /> 
+      <NewPost btnType="SEND"/> 
     </main>
   )
 }

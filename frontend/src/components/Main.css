@@ -166,6 +166,10 @@ h2.header-name {
   padding: 5px;
   border-radius: 3px;
   font-size: var(--font-xs);
+  margin-right: 15px;
+}
+.header-time {
+  color: var(--neutral-blue-hover);
 }
 
 /* ------------Comment Edit Section Style--------------- */

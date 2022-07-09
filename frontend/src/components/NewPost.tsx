@@ -4,7 +4,12 @@ import { createMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import avatar from '../assets/avatars/image-juliusomo.webp';
 
-const NewPost = () => {
+interface PostProps {
+  btnType: string,
+  submitReply?: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+}
+
+const NewPost = ({btnType, submitReply}:PostProps) => {
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useAppDispatch();
@@ -15,10 +20,15 @@ const NewPost = () => {
   
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    const messageData: messagesDataInterface = {
-      text,
+    if(!submitReply) {
+      const messageData: messagesDataInterface = {
+        text,
+      }
+      dispatch(createMessage(messageData));
     }
-    dispatch(createMessage(messageData));
+    else {
+      submitReply(text, e);
+    }
     setText("");
   }
 
@@ -43,7 +53,7 @@ const NewPost = () => {
           {text}
         </textarea>
       </div>
-      <div className="post-btn btn" onClick={handleSubmit}><span className='btn-text'>SEND</span></div>
+      <div className="post-btn btn" onClick={handleSubmit}><span className='btn-text'>{btnType}</span></div>
     </section>
   )
 }
