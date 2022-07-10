@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { deleteMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
@@ -32,7 +32,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   const [msgHeight, setMsgHeight] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const msgRef = useRef<HTMLDivElement | null>(null);
-  //const replyRef = useRef<HTMLDivElement | null>(null);
+  const replyRef = createRef<HTMLDivElement>();
   const dispatch = useAppDispatch();
   const authUserId = useAppSelector((state) => state.auth.user?._id);
   const date = dayjs(updatedAt).fromNow();
@@ -76,16 +76,27 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
     }
 
     const handleClickOutside = (event: any) => {
+      //? Detects outside clicks when editing a message
       if (textareaRef.current && !textareaRef.current.contains(event.target)
       && event.target.innerText !== 'UPDATE') {
         triggerEdit();
+      }
+      //? Detects outside clicks when replying to a message
+      else if (isReplying && replyRef.current && !replyRef.current.contains(event.target)
+      && event.target.innerText !== 'Reply')
+      {
+        setIsReplying(!isReplying);
       }
     }
     const handleEscPress = (event: any) => {
       if (textareaRef.current && event.key === 'Escape') {
         triggerEdit();
       }
+      else if (replyRef.current && event.key === 'Escape') {
+        setIsReplying(!isReplying);
+      }
     }
+
     //? Event listener for cancelling text editing
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscPress);
@@ -93,7 +104,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
       document.removeEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleClickOutside);
     };
-  }, [msg, msgHeight, triggerEdit]);
+  }, [msg, msgHeight, triggerEdit, isReplying, replyRef]);
 
   const styles: { [name: string]: React.CSSProperties } = {
   
@@ -177,7 +188,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
     } */}
 
     {isReplying ? 
-      <NewPost btnType="REPLY" submitReply={submitReply} />
+      <NewPost btnType="REPLY" submitReply={submitReply} ref={replyRef} />
       : <></>
     }
     </>

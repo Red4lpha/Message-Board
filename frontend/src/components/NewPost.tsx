@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import { forwardRef, useEffect, useRef, useState} from 'react';
 import { useAppDispatch } from '../app/hooks';
 import { createMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
@@ -7,9 +7,10 @@ import avatar from '../assets/avatars/image-juliusomo.webp';
 interface PostProps {
   btnType: string,
   submitReply?: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+  //ref?: ForwardedRef<HTMLDivElement | null>
 }
 
-const NewPost = ({btnType, submitReply}:PostProps) => {
+const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, ref) => {
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useAppDispatch();
@@ -41,7 +42,7 @@ const NewPost = ({btnType, submitReply}:PostProps) => {
   }, [text]);
 
   return (
-    <section className='post-container container-style'>
+    <section className='post-container container-style' ref={ref}>
       <div className="post-avatar">
       <img src={avatar} alt="avatar icon"/>
       </div>
@@ -56,7 +57,7 @@ const NewPost = ({btnType, submitReply}:PostProps) => {
       <div className="post-btn btn" onClick={handleSubmit}><span className='btn-text'>{btnType}</span></div>
     </section>
   )
-}
+})
 
 export default NewPost
 
