@@ -250,8 +250,10 @@ export const messagesSlice = createSlice ({
         state.isLoading = false
         state.isSuccess = true
         const {_id, deleted } = action.payload
-        deleted === true ?  
-          state.messagesArray.filter(msg => msg._id !== _id) : state.isError = true
+        let index = state.messagesArray.findIndex(msg => msg._id ===_id);
+        deleted ?  
+          state.messagesArray.splice(index,1) 
+          : state.isError = true
       })
       .addCase(deleteMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false

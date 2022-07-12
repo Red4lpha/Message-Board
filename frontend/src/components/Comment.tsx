@@ -11,6 +11,7 @@ import deleteIcon from '../assets/icon-delete.svg';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import NewPost from "./NewPost";
+import DeleteConfirmation from "./DeleteConfirmation";
 dayjs().format();
 dayjs.extend(relativeTime);
 
@@ -27,8 +28,8 @@ interface CommentProps {
 const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:CommentProps) => {
   const [edit, setEdit] = useState(false);
   const [msg, setMsg] = useState(text);
-  const [reply, setReply] = useState("");
-  const [isReplying, setIsReplying] = useState(false); 
+  const [isReplying, setIsReplying] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);  
   const [msgHeight, setMsgHeight] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const msgRef = useRef<HTMLDivElement | null>(null);
@@ -120,77 +121,68 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   //TODO remove the any from props
   return (
     <>
-    <div className="comment-container container-style">
-      <section className="vote">
-        <div className="vote-btn" onClick={submitUpVote}>
-          <img src={plus} alt="positive up vote"/>
-        </div>
-        <div className="vote-count">{vote} </div>
-        <div className="vote-btn" onClick={submitDownVote}>
-        <img src={minus} alt="minus down vote"/>
-        </div>
-      </section>
-      
-      <section className="header">
-        <span className="header-avatar">
-          <img src={avatar} alt="avatar icon"/>
-        </span>
-        <h2 className="header-name">{owner}</h2>
-        {(authUserId === ownerId) ? <span className="header-you">you</span> :<></> }
-        <span className="header-time">{date}</span>
-      </section>
-
-      <section className="edit" >
-        {(authUserId === ownerId) ? 
-          <>
-            <span className="edit-delete" onClick={submitDelete}>
-              <img src={deleteIcon} alt="delete post icon"/>
-              <span className="edit-text">Delete</span> 
-            </span>
-            <span onClick={triggerEdit}>
-              <img src={editIcon} alt="edit post icon"/>
-              <span className="edit-text">Edit</span>  
-            </span>
-          </>
-          :
-          <span onClick={() => setIsReplying(!isReplying)}>
-            <img src={replyIcon} alt="reply to post icon"/>
-            <span className="edit-text">Reply</span> 
+      <div className="comment-container container-style">
+        <section className="vote">
+          <div className="vote-btn" onClick={submitUpVote}>
+            <img src={plus} alt="positive up vote"/>
+          </div>
+          <div className="vote-count">{vote} </div>
+          <div className="vote-btn" onClick={submitDownVote}>
+          <img src={minus} alt="minus down vote"/>
+          </div>
+        </section>
+        
+        <section className="header">
+          <span className="header-avatar">
+            <img src={avatar} alt="avatar icon"/>
           </span>
-        }
-      </section>
+          <h2 className="header-name">{owner}</h2>
+          {(authUserId === ownerId) ? <span className="header-you">you</span> :<></> }
+          <span className="header-time">{date}</span>
+        </section>
 
-      <section className="content">
-        {!edit ? 
-        <div className="message" ref={msgRef}>{msg}</div> 
-        : <>
-          <textarea ref={textareaRef} 
-          onChange={(e) => setMsg(e.target.value)} 
-          style={styles.textareaDefaultStyle}
-          value={msg}
-          / >
-          <div className="content-update-btn btn" onClick={submitEdit}>
-            <span className="btn-text">UPDATE</span>
-          </div>  
-        </>
-        }
+        <section className="edit" >
+          {(authUserId === ownerId) ? 
+            <>
+              <span className="edit-delete" 
+                onClick={(e) => setIsDeleting(!isDeleting)}>
+                <img src={deleteIcon} alt="delete post icon"/>
+                <span className="edit-text">Delete</span> 
+              </span>
+              <span onClick={triggerEdit}>
+                <img src={editIcon} alt="edit post icon"/>
+                <span className="edit-text">Edit</span>  
+              </span>
+            </>
+            :
+            <span onClick={() => setIsReplying(!isReplying)}>
+              <img src={replyIcon} alt="reply to post icon"/>
+              <span className="edit-text">Reply</span> 
+            </span>
+          }
+        </section>
 
-      </section>
-    </div>
-      {/*    {isReplying ? 
-      <div className="reply-message">
-      <input type='text'
-      value={reply}
-      onChange={(e) => setReply(e.target.value)} /> 
-      <span onClick={(e) => submitReply(reply, e)}>Submit Reply</span>
+        <section className="content">
+          {!edit ? 
+          <div className="message" ref={msgRef}>{msg}</div> 
+          : <>
+            <textarea ref={textareaRef} 
+            onChange={(e) => setMsg(e.target.value)} 
+            style={styles.textareaDefaultStyle}
+            value={msg}
+            / >
+            <div className="content-update-btn btn" onClick={submitEdit}>
+              <span className="btn-text">UPDATE</span>
+            </div>  
+          </>
+          }
+        </section>
       </div>
-      : <></>
-    } */}
-
-    {isReplying ? 
-      <NewPost btnType="REPLY" submitReply={submitReply} ref={replyRef} />
-      : <></>
-    }
+      {isReplying ? 
+        <NewPost btnType="REPLY" submitReply={submitReply} ref={replyRef} />
+        : null
+      }
+      {isDeleting? <DeleteConfirmation setIsDeleting={setIsDeleting} submitDelete={submitDelete} /> : null}
     </>
   )
 }

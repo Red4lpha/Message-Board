@@ -45,20 +45,25 @@ const CommentContainer = ({id, owner, ownerId, vote, text, updatedAt, childArray
         updatedAt={updatedAt}
         submitReply={submitReply}
         />
-      {sortSuccessors(id).filter(child=> child.parent === id).map((child) => (
-        <div className="child">
-        <CommentContainer
-          key={child._id}
-          id={child._id}
-          owner={child.owner.name}
-          ownerId={child.owner.name_id}
-          vote={child.votes.vote_count}
-          text={child.text}
-          updatedAt={child.updatedAt}
-          childArray={sortSuccessors(id)}
-        />
+
+      { sortSuccessors(id).length? 
+        <div className="child-container">  
+        {sortSuccessors(id).filter(child=> child.parent === id).map((child) => (
+          
+          <CommentContainer
+            key={child._id}
+            id={child._id}
+            owner={child.owner.name}
+            ownerId={child.owner.name_id}
+            vote={child.votes.vote_count}
+            text={child.text}
+            updatedAt={child.updatedAt}
+            childArray={sortSuccessors(id)}
+          />
+          
+        ))}
         </div>
-      ))}
+      : null}
     </>
   )
 }
