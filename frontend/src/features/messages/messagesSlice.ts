@@ -13,19 +13,19 @@ interface initialStateInterface {
   isSuccess: boolean,
   isLoading: boolean,
   message: string,
+  replyMessage: any,
+  messageId: string,
   messagesArray: any[],
-  replyMessage: any
 }
-
-//? Get user from localStorage
 
 const initialState: initialStateInterface = {
   isError: false,
   isSuccess: false,
   isLoading: false,
   message: '',
+  replyMessage: null,
+  messageId: '',
   messagesArray: [],
-  replyMessage: null
 }
 
 //? Get all the messages
@@ -163,7 +163,10 @@ export const messagesSlice = createSlice ({
   name: 'message',
   initialState,
   reducers: {
-    reset: (state) => initialState,
+    reset: (state) => initialState, 
+    setMsgId (state, action: PayloadAction<string>) {
+      state.messageId = action.payload;
+    }
 
   },
   extraReducers: (builder) => {
@@ -175,11 +178,13 @@ export const messagesSlice = createSlice ({
       .addCase(getMessages.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
+        state.messageId = ''
         state.messagesArray = action.payload
       })
       .addCase(getMessages.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.messageId = ''
         state.message = action.payload
       })
       .addCase(createMessage.pending, (state) => {
@@ -188,11 +193,13 @@ export const messagesSlice = createSlice ({
       .addCase(createMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
+        state.messageId = ''
         state.messagesArray.push(action.payload)
       })
       .addCase(createMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.messageId = ''
         state.message = action.payload
       })
       .addCase(replyMessage.pending, (state) => {
@@ -201,6 +208,7 @@ export const messagesSlice = createSlice ({
       .addCase(replyMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
+        state.messageId = ''
         state.messagesArray.push(action.payload)
         //TODO: is this needed anymore?
         state.replyMessage = action.payload
@@ -208,6 +216,7 @@ export const messagesSlice = createSlice ({
       .addCase(replyMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.messageId = ''
         state.replyMessage = null
         state.message = action.payload
       })
@@ -217,6 +226,7 @@ export const messagesSlice = createSlice ({
       .addCase(updateMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
+        state.messageId = ''
         const {_id, text} = action.payload
         let index = state.messagesArray.findIndex(msg => msg._id ===_id);
         index !== -1 ?  
@@ -225,6 +235,7 @@ export const messagesSlice = createSlice ({
       .addCase(updateMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.messageId = ''
         state.message = action.payload
       })
       .addCase(voteMessage.pending, (state) => {
@@ -233,6 +244,7 @@ export const messagesSlice = createSlice ({
       .addCase(voteMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
+        state.messageId = ''
         const {_id, votes} = action.payload
         let index = state.messagesArray.findIndex(msg => msg._id ===_id);
         index !== -1 ?  
@@ -241,6 +253,7 @@ export const messagesSlice = createSlice ({
       .addCase(voteMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.messageId = ''
         state.message = action.payload
       })
       .addCase(deleteMessage.pending, (state) => {
@@ -249,6 +262,7 @@ export const messagesSlice = createSlice ({
       .addCase(deleteMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
+        state.messageId = ''
         const {_id, deleted } = action.payload
         let index = state.messagesArray.findIndex(msg => msg._id ===_id);
         deleted ?  
@@ -258,10 +272,11 @@ export const messagesSlice = createSlice ({
       .addCase(deleteMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
+        state.messageId = ''
         state.message = action.payload
       })
   },
 })
 
-export const { reset } = messagesSlice.actions;
+export const { reset, setMsgId } = messagesSlice.actions;
 export default messagesSlice.reducer

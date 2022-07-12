@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch } from "../app/hooks";
-import { replyMessage} from '../features/messages/messagesSlice';
+import { replyMessage, setMsgId} from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import Comment from './Comment';
 
@@ -19,6 +19,7 @@ const CommentContainer = ({id, owner, ownerId, vote, text, updatedAt, childArray
 
   const submitReply = (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     messageData.text = reply;
+    if (id) dispatch(setMsgId(id));
     dispatch(replyMessage(messageData)) 
     //childArray.push(replyMessage)
   }

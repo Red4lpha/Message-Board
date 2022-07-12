@@ -1,6 +1,6 @@
 import { createRef, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { deleteMessage, updateMessage, voteMessage } from '../features/messages/messagesSlice';
+import { deleteMessage, setMsgId, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import plus from '../assets/icon-plus.svg';
 import minus from '../assets/icon-minus.svg';
@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import NewPost from "./NewPost";
 import DeleteConfirmation from "./DeleteConfirmation";
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 dayjs().format();
 dayjs.extend(relativeTime);
 
@@ -37,19 +38,23 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   const dispatch = useAppDispatch();
   const authUserId = useAppSelector((state) => state.auth.user?._id);
   const date = dayjs(updatedAt).fromNow();
+  const {isLoading, messageId} = useAppSelector((state) => state.messages)
   const messageData: messagesDataInterface = {
     id: id
   }
 
   const submitUpVote = () => {
     messageData.vote = 1;
+    if (id) dispatch(setMsgId(id));
     dispatch(voteMessage(messageData));
   }
   const submitDownVote = () => {
     messageData.vote = -1;
+    if (id) dispatch(setMsgId(id));
     dispatch(voteMessage(messageData));
   }
   const submitDelete = () => {
+    if (id) dispatch(setMsgId(id));
     dispatch(deleteMessage(messageData));
   }
   const triggerEdit = () => {
@@ -61,6 +66,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   const submitEdit = () => {
     if(edit) {
       messageData.text = msg;
+      if (id) dispatch(setMsgId(id))
       dispatch(updateMessage(messageData))
     }
     setEdit(!edit);
@@ -118,6 +124,13 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
       fontFamily: "'Rubik', 'Courier New', Courier, monospace",
     },
   };
+
+  if (isLoading && messageId === id){
+    return (
+      <CircularProgress color="secondary" />
+    )
+  } 
+
   //TODO remove the any from props
   return (
     <>
@@ -137,7 +150,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
             <img src={avatar} alt="avatar icon"/>
           </span>
           <h2 className="header-name">{owner}</h2>
-          {(authUserId === ownerId) ? <span className="header-you">you</span> :<></> }
+          {(authUserId === ownerId) ? <span className="header-you">you</span> :null }
           <span className="header-time">{date}</span>
         </section>
 
@@ -180,8 +193,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
       </div>
       {isReplying ? 
         <NewPost btnType="REPLY" submitReply={submitReply} ref={replyRef} />
-        : null
-      }
+        : null}
       {isDeleting? <DeleteConfirmation setIsDeleting={setIsDeleting} submitDelete={submitDelete} /> : null}
     </>
   )

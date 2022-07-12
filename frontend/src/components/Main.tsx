@@ -32,14 +32,14 @@ const Main = () => {
     }
   },[dispatch, isError, message])
 
-  if (isLoading) {
+ /*  if (isLoading) {
     return (
     <main>
       <h1>Main message</h1>
       <LinearLoader />
     </main>
     )
-  } 
+  }  */
 
   //TODO clear out the any type
   //TODO look into why several get calls are used in the get messages function

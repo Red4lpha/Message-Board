@@ -7,19 +7,13 @@ import Register from './components/Register';
 
 //TODO set isLoading event to tell user when loading is occurring
 //TODO set isError event to tell user when an error occurred
-//TODO make a header with the login / register buttons if user is not found
-//TODO make a header with logout if user is found - maybe display the user?
-//TODO implement the main message page with separate componenet for each message
-//TODO implement limit user to only edit/delete their own messages
-//TODO expand the messages to contain the proper info
-//TODO implement the reply messages
-//TODO implement the reply functionality
 //TODO look into why several get calls are used in the get messages function
 //TODO deal with multiple errors with no backend connection
-//TODO not getting new lines in create_message
 //TODO handle:   code: 'ERR_HTTP_HEADERS_SENT' on the backend (got it from sending an empty update message)
 //TODO if the user is signed out, then reply should prompt the user to sign in
-
+//TODO Make sure when replying to message, that after the new message comes in, the reply section of that original message closes
+//TODO center the circular loading icon(in mobile it seems - recheck)
+//TODO mobile - change NewPost to have proper padding on the side
 
 function App() {
   
