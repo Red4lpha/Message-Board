@@ -38,7 +38,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   const dispatch = useAppDispatch();
   const authUserId = useAppSelector((state) => state.auth.user?._id);
   const date = dayjs(updatedAt).fromNow();
-  const {isLoading, messageId} = useAppSelector((state) => state.messages)
+  const {isLoading, messageId} = useAppSelector((state) => state.messages);
   const messageData: messagesDataInterface = {
     id: id
   }
@@ -56,12 +56,6 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   const submitDelete = () => {
     if (id) dispatch(setMsgId(id));
     dispatch(deleteMessage(messageData));
-  }
-  const triggerEdit = () => {
-    if(edit){
-      setMsg(text);
-    } 
-    setEdit(!edit);
   }
   const submitEdit = () => {
     if(edit) {
@@ -86,7 +80,8 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
       //? Detects outside clicks when editing a message
       if (textareaRef.current && !textareaRef.current.contains(event.target)
       && event.target.innerText !== 'UPDATE') {
-        triggerEdit();
+        setMsg(text);
+        setEdit(!edit);
       }
       //? Detects outside clicks when replying to a message
       else if (isReplying && replyRef.current && !replyRef.current.contains(event.target)
@@ -97,7 +92,8 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
     }
     const handleEscPress = (event: any) => {
       if (textareaRef.current && event.key === 'Escape') {
-        triggerEdit();
+        setMsg(text);
+        setEdit(!edit);
       }
       else if (replyRef.current && event.key === 'Escape') {
         setIsReplying(!isReplying);
@@ -109,9 +105,9 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
     document.addEventListener("keydown", handleEscPress);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleClickOutside);
+      document.addEventListener("keydown", handleEscPress);
     };
-  }, [msg, msgHeight, triggerEdit, isReplying, replyRef]);
+  }, [msg, msgHeight, isReplying, replyRef, setMsg, setEdit]);
 
   const styles: { [name: string]: React.CSSProperties } = {
   
@@ -158,11 +154,11 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
           {(authUserId === ownerId) ? 
             <>
               <span className="edit-delete" 
-                onClick={(e) => setIsDeleting(!isDeleting)}>
+                onClick={() => setIsDeleting(!isDeleting)}>
                 <img src={deleteIcon} alt="delete post icon"/>
                 <span className="edit-text">Delete</span> 
               </span>
-              <span onClick={triggerEdit}>
+              <span onClick={() => setEdit(!edit)}>
                 <img src={editIcon} alt="edit post icon"/>
                 <span className="edit-text">Edit</span>  
               </span>

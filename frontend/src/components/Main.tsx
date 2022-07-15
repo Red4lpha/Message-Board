@@ -7,21 +7,22 @@ import LinearLoader from './LinearLoader';
 //import Comment from './Comment';
 import CommentContainer from './CommentContainer';
 import NewPost from './NewPost';
+import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 
 
 const Main = () => {
 
   const dispatch = useAppDispatch();
-  const {messagesArray, isLoading, isError, message} = useAppSelector((state) => state.messages)
+  const {messagesArray, isLoading, loadingArea, isError, message} = useAppSelector((state) => state.messages)
   console.log("main comp rerender")
   let childArray  = messagesArray.filter(msg => msg.parent !== null)
   //console.log(childArray)
   
   useEffect(() => {
     //TODO create error message componenet
-    if (isError) {
+   /*  if (isError) {
       console.log('Error getting Messages: ',message)
-    }
+    } */
 
     console.log("main useEffect called")
     dispatch(getMessages())
@@ -30,20 +31,22 @@ const Main = () => {
       //dispatch(reset())
       console.log("main useEffect dismount");
     }
-  },[dispatch, isError, message])
+  },[dispatch, isError])
 
- /*  if (isLoading) {
+   if (isLoading && loadingArea === 'getMessages') {
     return (
     <main>
       <h1>Main message</h1>
-      <LinearLoader />
+      <div className="center">
+      <CircularProgress color="secondary" />
+      </div>
     </main>
     )
-  }  */
+  }   
 
   //TODO clear out the any type
   //TODO look into why several get calls are used in the get messages function
-  return (
+   return (
     
     <main>
       <h1>Main message</h1>
@@ -70,7 +73,7 @@ const Main = () => {
       )}
       <NewPost btnType="SEND"/> 
     </main>
-  )
+  ) 
 }
 
 export default Main

@@ -12,6 +12,7 @@ interface initialStateInterface {
   isError: boolean,
   isSuccess: boolean,
   isLoading: boolean,
+  loadingArea: string,
   message: string,
   replyMessage: any,
   messageId: string,
@@ -22,6 +23,7 @@ const initialState: initialStateInterface = {
   isError: false,
   isSuccess: false,
   isLoading: false,
+  loadingArea: '',
   message: '',
   replyMessage: null,
   messageId: '',
@@ -173,33 +175,39 @@ export const messagesSlice = createSlice ({
     builder
       .addCase(getMessages.pending, (state) => {
         state.isLoading = true
+        state.loadingArea = 'getMessages'
       })
       //TODO: Change the PayloadAction from any
       .addCase(getMessages.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
         state.messageId = ''
+        state.loadingArea = ''
         state.messagesArray = action.payload
       })
       .addCase(getMessages.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
         state.messageId = ''
+        state.loadingArea = ''
         state.message = action.payload
       })
       .addCase(createMessage.pending, (state) => {
         state.isLoading = true
+        state.loadingArea = 'createMessage'
       })
       .addCase(createMessage.fulfilled, (state, action: PayloadAction<any> ) => {
         state.isLoading = false
         state.isSuccess = true
         state.messageId = ''
+        state.loadingArea = ''
         state.messagesArray.push(action.payload)
       })
       .addCase(createMessage.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false
         state.isError = true
         state.messageId = ''
+        state.loadingArea = ''
         state.message = action.payload
       })
       .addCase(replyMessage.pending, (state) => {

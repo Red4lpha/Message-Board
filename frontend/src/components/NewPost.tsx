@@ -1,8 +1,9 @@
 import { forwardRef, useEffect, useRef, useState} from 'react';
-import { useAppDispatch } from '../app/hooks';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { createMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import avatar from '../assets/avatars/image-juliusomo.webp';
+import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 
 interface PostProps {
   btnType: string,
@@ -14,6 +15,7 @@ const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, 
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useAppDispatch();
+  const {isLoading, loadingArea} = useAppSelector((state) => state.messages)
 
   const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value);
@@ -41,6 +43,15 @@ const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, 
     }
   }, [text]);
 
+  //Loading indicator
+  if (isLoading && loadingArea === 'createMessage'){
+    return (
+      <div className='center'>
+        <CircularProgress color="secondary" />
+      </div>
+    )
+  }  
+
   return (
     <section className='post-container container-style' ref={ref}>
       <div className="post-avatar">
@@ -56,7 +67,7 @@ const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, 
       </div>
       <div className="post-btn btn" onClick={handleSubmit}><span className='btn-text'>{btnType}</span></div>
     </section>
-  )
+  ) 
 })
 
 export default NewPost

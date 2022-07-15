@@ -105,6 +105,9 @@ textarea:focus {
   outline: none !important;
   border-color: var(--primary-blue);
 }
+.center {
+  margin: auto;
+}
 
 /* ------------Comment Style--------------- */
 .comment-container {
