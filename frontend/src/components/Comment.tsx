@@ -2,12 +2,12 @@ import { createRef, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { deleteMessage, setMsgId, updateMessage, voteMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
-import plus from '../assets/icon-plus.svg';
-import minus from '../assets/icon-minus.svg';
+import {ReactComponent as PlusIcon} from '../assets/icon-plus.svg';
+import {ReactComponent as MinusIcon} from '../assets/icon-minus.svg';
 import avatar from '../assets/avatars/image-juliusomo.webp';
-import replyIcon from '../assets/icon-reply.svg';
-import editIcon from '../assets/icon-edit.svg';
-import deleteIcon from '../assets/icon-delete.svg';
+import {ReactComponent as ReplyIcon} from '../assets/icon-reply.svg';
+import {ReactComponent as EditIcon} from '../assets/icon-edit.svg';
+import {ReactComponent as DeleteIcon} from '../assets/icon-delete.svg';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import NewPost from "./NewPost";
@@ -133,11 +133,11 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
       <div className="comment-container container-style">
         <section className="vote">
           <div className="vote-btn" onClick={submitUpVote}>
-            <img src={plus} alt="positive up vote"/>
+            <PlusIcon aria-label="icon for plus upvote" />
           </div>
           <div className="vote-count">{vote} </div>
           <div className="vote-btn" onClick={submitDownVote}>
-          <img src={minus} alt="minus down vote"/>
+            <MinusIcon aria-label="icon for minus downvote" />
           </div>
         </section>
         
@@ -155,17 +155,19 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
             <>
               <span className="edit-delete" 
                 onClick={() => setIsDeleting(!isDeleting)}>
-                <img src={deleteIcon} alt="delete post icon"/>
+                <DeleteIcon aria-label="delete icon" />
                 <span className="edit-text">Delete</span> 
               </span>
-              <span onClick={() => setEdit(!edit)}>
-                <img src={editIcon} alt="edit post icon"/>
+              <span className="edit-edit" 
+              onClick={() => setEdit(!edit)}>
+                <EditIcon aria-label="edit icon" />      
                 <span className="edit-text">Edit</span>  
               </span>
             </>
             :
             <span onClick={() => setIsReplying(!isReplying)}>
-              <img src={replyIcon} alt="reply to post icon"/>
+              {/* <img src={replyIcon} alt="reply to post icon"/> */}
+              <ReplyIcon aria-label="reply icon" />
               <span className="edit-text">Reply</span> 
             </span>
           }

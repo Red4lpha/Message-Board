@@ -17,14 +17,16 @@
   /* Primary Colors */
   --primary-blue: hsl(238, 40%, 52%);
   --primary-red: hsl(358, 79%, 66%);
-  --primary-blue-hover: hsl(239, 57%, 85%);
-  --primary-red-hover: hsl(357, 100%, 86%);
-  
+  --primary-blue-light: hsl(239, 57%, 85%);
+  --primary-red-light: hsl(357, 100%, 86%);
+  --primary-light-blue-filter: invert(84%) sepia(2%) saturate(6294%) hue-rotate(200deg) brightness(94%) contrast(100%);
+  --primary-light-red-filter: invert(74%) sepia(4%) saturate(2654%) hue-rotate(309deg) brightness(104%) contrast(110%);
+
   /* Neutral Colors */
-  --neutral-blue: hsl(212, 24%, 26%);
-  --neutral-blue-hover: hsl(211, 10%, 45%);
+  --neutral-blue-dark: hsl(212, 24%, 26%);
+  --neutral-gray-blue: hsl(211, 10%, 45%);
   --neutral-gray: hsl(223, 19%, 93%);
-  --neutral-gray-hover: hsl(228, 33%, 97%);
+  --neutral-gray-light: hsl(228, 33%, 97%);
   --neutral-white: hsl(0, 0%, 100%);
 }
 
@@ -57,7 +59,7 @@ img {
 
 
 body {
-  background-color: var(--neutral-gray-hover);
+  background-color: var(--neutral-gray-light);
   font-family: 'Rubik', 'Courier New', Courier, monospace;
 }
 
@@ -93,7 +95,8 @@ main {
   cursor: pointer;
 }
 .btn:hover {
-  background-color: var(--primary-blue-hover);
+  /* background-color: var(--primary-blue-light); */
+  opacity: .5;
 }
 textarea {
   display: block;
@@ -138,7 +141,7 @@ textarea:focus {
 section.vote {
   text-align: center;
   font-size: var(--font-xl);
-  background-color: var(--neutral-gray-hover);
+  background-color: var(--neutral-gray-light);
   border-radius: 10px;
   grid-column: 1 / 2;
   grid-row: 1 / 3;
@@ -147,16 +150,16 @@ section.vote {
 }
 .vote > * {
   color: var(--primary-blue);
-  fill: var(--neutral-blue-hover);
+  fill: var(--neutral-gray-blue);
 }
 .vote-btn {
   padding: 7px 12px;
 }
 
 .vote-btn:hover {
-  background-color: var(--neutral-gray-hover);
   cursor: pointer;
 }
+
 
 /* ------------Comment Header Section Style--------------- */
 section.header {
@@ -187,7 +190,7 @@ h2.header-name {
   margin-right: var(--desktop-msg-gap);
 }
 .header-time {
-  color: var(--neutral-blue-hover);
+  color: var(--neutral-gray-blue);
 }
 
 /* ------------Comment Edit Section Style--------------- */
@@ -197,8 +200,8 @@ section.edit {
   font-weight: 500;
   color: var(--primary-blue);
 }
-.edit img {
-  padding-right: 5px;
+.edit svg {
+  margin-right: 5px;
 }
 .edit span {
   cursor: pointer;
@@ -208,14 +211,21 @@ section.edit {
   color: var(--primary-red);
 }
 
+.edit span:hover {
+  opacity: .50;
+}
 
+/* .edit-edit:hover {
+  filter: invert(84%) sepia(2%) saturate(6294%) hue-rotate(200deg) brightness(94%) contrast(100%);
+} 
+ */
 
 /* ------------Comment Message Section Style--------------- */
 section.content {
   grid-column: 2 / span 3;
   grid-row-start: 2;
   align-self: flex-start;
-  color: var(--neutral-blue-hover);
+  color: var(--neutral-gray-blue);
 }
 
 .message {
@@ -241,6 +251,41 @@ section.content {
   flex-grow: 1;
   padding: 0 var(--desktop-msg-gap);
 }
+
+/* ------------Delete Confirmation --------------- */
+.delete-confirm-container {
+  padding: 25px;
+}
+.delete-confirm-container h2 {
+  font-weight: 700;
+  font-size: var(--font-xl);
+}
+.delete-confirm-container p {
+  color: var(--neutral-gray-blue);
+  padding: 25px 0;
+  font-size: var(--font-base);
+  line-height: 1.3
+}
+.delete-confirm-btns {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  gap: 10px;
+}
+.delete-confirm-btns span {
+  width: auto;
+  padding: 15px 20px;
+  font-size: .85em;
+  flex: 1 1 100%;
+}
+
+.delete-no {
+  background-color: var(--neutral-gray-blue);
+}
+.delete-yes {
+  background-color: var(--primary-red);
+}
+
 
 /* ------------Mobile Layout---------------- */
 
@@ -283,9 +328,11 @@ section.content {
     align-items: center;
     justify-self: flex-start;
   }
+  .vote > * {
+    padding: 10px;
+  }
 
   .vote-btn {
-    padding: 7px 12px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -330,27 +377,58 @@ section.content {
   }
 
   /* ------------Post New Comment Style--------------- */
-.post-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: var(--mobile-msg-gap);
-}
-.post-avatar {
-  width: 35px;
-  order: 2;
-}
-.post-btn {
-  order: 3;
-}
+  .post-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--mobile-msg-gap);
+  }
+  .post-avatar {
+    width: 35px;
+    order: 2;
+  }
+  .post-btn {
+    order: 3;
+  }
 
-.post-form {
-  flex-grow: 1;
-  flex-basis: 100%;
-  order: 1;
-  padding: 0;
-}
+  .post-form {
+    flex-grow: 1;
+    flex-basis: 100%;
+    order: 1;
+    padding: 0;
+  }
 
+  /* ------------Post New Comment Style--------------- */
+  .post-container {
+    margin: 0 var(--mobile-msg-gap);
+  }
+
+  /* ------------Delete Confirmation --------------- */
+  
+ /*  .delete-confirm-btns span {
+    width: auto;
+    padding: 15px 25px;
+    display: flex;
+  }
+
+  .delete-confirm-container p {
+    color: var(--neutral-gray-blue);
+    padding: 25px 0;
+    font-size: var(--font-base);
+    line-height: 1.3
+  }
+ 
+  .delete-confirm-btns span {
+    padding: 5px 10px;
+  
+  }
+  
+  .delete-no {
+    background-color: var(--neutral-gray-blue);
+  }
+  .delete-yes {
+    background-color: var(--primary-red);
+  } */
 }
