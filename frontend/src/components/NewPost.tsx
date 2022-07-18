@@ -13,6 +13,7 @@ interface PostProps {
 
 const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, ref) => {
   const [text, setText] = useState("");
+  const newClassName = btnType.toLowerCase();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useAppDispatch();
   const {isLoading, loadingArea} = useAppSelector((state) => state.messages)
@@ -53,7 +54,9 @@ const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, 
   }  
 
   return (
-    <section className='post-container container-style' ref={ref}>
+    
+    <section className={`post-container container-style ${newClassName}-post`}
+      ref={ref}>
       <div className="post-avatar">
       <img src={avatar} alt="avatar icon"/>
       </div>

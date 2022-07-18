@@ -13,5 +13,6 @@ export interface messagesDataInterface {
   ownerId?: string,
   vote?: number,
   updatedAt?: string,
-  childArray?: any[]
+  childArray?: any[],
+  parent?: string
 }

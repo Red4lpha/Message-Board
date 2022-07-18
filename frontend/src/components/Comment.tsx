@@ -22,11 +22,12 @@ interface CommentProps {
   ownerId: messagesDataInterface['ownerId'];
   vote: messagesDataInterface['vote'];
   text:messagesDataInterface['text'];
-  updatedAt:messagesDataInterface['updatedAt']; 
+  updatedAt:messagesDataInterface['updatedAt'];
+  parent:messagesDataInterface['parent']; 
   submitReply: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:CommentProps) => {
+const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}:CommentProps) => {
   const [edit, setEdit] = useState(false);
   const [msg, setMsg] = useState(text);
   const [isReplying, setIsReplying] = useState(false);
@@ -38,7 +39,8 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
   const dispatch = useAppDispatch();
   const authUserId = useAppSelector((state) => state.auth.user?._id);
   const date = dayjs(updatedAt).fromNow();
-  const {isLoading, messageId} = useAppSelector((state) => state.messages);
+  const {isLoading, messageId, messagesArray} = useAppSelector((state) => state.messages);
+  const parentName: string = messagesArray.filter(msg => msg._id === parent).map((parentArray) => parentArray.owner.name).find(a => true);
   const messageData: messagesDataInterface = {
     id: id
   }
@@ -175,7 +177,10 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, submitReply}:Commen
 
         <section className="content">
           {!edit ? 
-          <div className="message" ref={msgRef}>{msg}</div> 
+          <p className="message" ref={msgRef}>
+            {parent? <span className="message-parent-name">@{parentName} </span> : null}
+            {msg}
+          </p> 
           : <>
             <textarea ref={textareaRef} 
             onChange={(e) => setMsg(e.target.value)} 
