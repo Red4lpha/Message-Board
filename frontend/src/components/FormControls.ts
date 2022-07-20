@@ -1,6 +1,6 @@
-import { TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { json } from "stream/consumers";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { login, register, reset} from '../features/auth/authSlice'
 
@@ -159,13 +159,15 @@ export const FormControls = () => {
     let errorMsg = "";
     if(res.message)
       return res.message;
+    if(res.Message)
+      return res.Message;
     else if(res.errors){
       res.errors.forEach((el: { msg: string; }) => {
         errorMsg += el.msg + "\n"
       });
       return errorMsg;
     }
-    else return "Unknown error"
+    else return JSON.stringify(res);
   }
 
   return {
@@ -176,6 +178,7 @@ export const FormControls = () => {
     handleFormSubmit,
     handleReset,
     formIsValid,
-    setForm
+    setForm,
+    formatRes
   };
 };

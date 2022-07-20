@@ -165,7 +165,15 @@ export const messagesSlice = createSlice ({
   name: 'message',
   initialState,
   reducers: {
-    reset: (state) => initialState, 
+    reset: (state) => {
+      state.isError = false;
+      state.isSuccess = false;
+      state.isLoading = false;
+      state.loadingArea = '';
+      state.message = '';
+      state.replyMessage = null;
+      state.messageId = '';
+    },
     setMsgId (state, action: PayloadAction<string>) {
       state.messageId = action.payload;
     }
