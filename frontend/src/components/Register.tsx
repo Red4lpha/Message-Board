@@ -1,67 +1,51 @@
-import React, {useEffect, useState} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { register, reset} from '../features/auth/authSlice'
-import { userDataInterface } from '../types/types';
-import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container, ButtonGroup } from '@mui/material';
+import React, {useEffect} from 'react';
+import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container, ButtonGroup, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { FormControls } from './FormControls';
 
 const theme = createTheme();
-const initialState = {
-  name: "",
-  email: "",
-  password: "",
-  password2: ""
-};
+
+//? Expected form fields
+const inputFieldValues = [
+  {
+    name: 'name',
+    label: 'Username'
+  },
+  {
+    name: 'email',
+    label: 'Email Address',
+    autoComplete: 'email'
+  },
+  {
+    name: 'password',
+    label: 'Password',
+    type: 'password',
+  },
+  {
+    name: 'password2',
+    label: 'Confirm Password',
+    type: 'password'
+  }
+];
+
+
 const Register = () => {
-  const [{name, email, password, password2}, setFormData] = useState(initialState)
-  const {user, isLoading, isSuccess, isError, message} = useAppSelector((state) => state.auth)
-  const navigate = useNavigate(); 
-
-  //const {user, isLoading, isError, isSuccess, message,} = useAppSelector((state: any) => state.auth)
-
-  const dispatch = useAppDispatch();
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-
-    if(password !== password2) {
-      console.log('Passwords do not match')
-    } else {
-      const userData: userDataInterface = {
-        name,
-        email,
-        password,
-      }
-      //const temp: string = 'temp'
-      dispatch(register(userData))
-    }
-  }
-  //TODO: Write out handle reset logic
-  const handleReset = () => {
-    setFormData(initialState)
-  }
-
-  const onChange = (e: any) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }))
-  }
+  const {
+    handleChange,
+    handleFormSubmit,
+    handleReset,
+    formIsValid,
+    errors,
+    errorPrompt,
+    values,
+    setForm
+  } = FormControls();
 
   useEffect(() => {
-    if (isError) {
-      console.log(message)
-    }
+    setForm('register')
+  }, [setForm])
 
-    if (isSuccess || user) {
-      navigate('/')
-    }
-
-    dispatch(reset())
-  }, [user, isError, isSuccess, message, navigate, dispatch])
   return (
     <ThemeProvider theme={theme}>
     <Container component="main" maxWidth="xs">
@@ -80,61 +64,47 @@ const Register = () => {
         <Typography component="h1" variant="h5">
           Register
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              label="Username"
-              name="name"
-              autoComplete="name"
-              value={name}
-              onChange={onChange}
-              autoFocus
-            />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={onChange}
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            value={password}
-            onChange={onChange}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password2"
-            label="Confirm Password"
-            type="password"
-            id="password2"
-            value={password2}
-            onChange={onChange}
-          />
+        
+        {(errorPrompt !== '') ? 
+          <Alert severity="error">
+            {errorPrompt}
+          </Alert>
+        : null}
+        <Box component="form" onSubmit={handleFormSubmit} noValidate sx={{ mt: 1 }}>
+          {inputFieldValues.map((field, index) => {
+              return (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  key={index}
+                  id={field.name}
+                  label={field.label}
+                  name={field.name}
+                  autoComplete={field.autoComplete ?? 'none'}
+                  type={field.type ?? 'none'}
+                  value={values[field.name]}
+                  onChange={handleChange}
+                  onBlur={handleChange}
+                  autoFocus
+                  error={errors[field.name]}
+                  {...(errors[field.name] && {
+                    error: true,
+                    helperText: errors[field.name]
+                  })}
+                />
+              )
+            })} 
+
           <ButtonGroup fullWidth>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, mr: 3 }}
+              disabled={!formIsValid()} 
             >
-              Sign In
+              Register
             </Button>
             <Button
               onClick={handleReset}

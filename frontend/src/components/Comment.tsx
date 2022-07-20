@@ -123,6 +123,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}
     },
   };
 
+  //? If loading is occuring the comment is replaced by a loading icon
   if (isLoading && messageId === id){
     return (
       <CircularProgress color="secondary" />

@@ -13,7 +13,7 @@ interface initialStateInterface {
   isError: boolean,
   isSuccess: boolean,
   isLoading: boolean,
-  message: string,
+  message: any,
 }
 
 //? Get user from localStorage

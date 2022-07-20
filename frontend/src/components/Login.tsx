@@ -1,51 +1,35 @@
-import {FormEvent, useEffect, useState} from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { login, reset} from '../features/auth/authSlice'
-import { userDataInterface } from '../types/types';
-import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/material';
+import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { FormControls } from './FormControls';
 
 const theme = createTheme();
 
+//? Expected form fields
+const inputFieldValues = [
+  {
+    name: 'email',
+    label: 'Email Address',
+    autoComplete: 'email'
+  },
+  {
+    name: 'password',
+    label: 'Password',
+  }
+];
+
+
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const {user, isLoading, isSuccess, isError, message} = useAppSelector((state) => state.auth)
-  const navigate = useNavigate();
-  const {email, password} = formData;
-  const dispatch = useAppDispatch();
+  
+  const {
+    handleChange,
+    handleFormSubmit,
+    formIsValid,
+    errors,
+    errorPrompt,
+    values
+  } = FormControls();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    const userData: userDataInterface = {
-      email,
-      password,
-    }
-    //const temp: string = 'temp'
-    dispatch(login(userData))
-  }
-  const onChange = (e: any) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }))
-  }
-  useEffect(() => {
-    if (isError) {
-      console.log(message)
-    }
-
-    if (isSuccess || user) {
-      navigate('/')
-    }
-
-    dispatch(reset())
-  }, [user, isError, isSuccess, message, navigate, dispatch])
 
   return (
     <ThemeProvider theme={theme}>
@@ -65,35 +49,44 @@ const Login = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={onChange}
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            value={password}
-            onChange={onChange}
-            autoComplete="current-password"
-          />
+        {(errorPrompt !== '') ? 
+          <Alert severity="error">
+            {errorPrompt}
+          </Alert>
+        : null}
+        
+        <Box component="form" onSubmit={handleFormSubmit} noValidate sx={{ mt: 1 }}>
+          
+          {inputFieldValues.map((field, index) => {
+            return (
+              <TextField
+                key={index}
+                margin="normal"
+                required
+                fullWidth
+                id={field.name}
+                label={field.label}
+                error={errors[field.name]}
+                name={field.name}
+                autoComplete={field.autoComplete ?? 'none'}
+                type={field.name}
+                value={values[field.name]}
+                onChange={handleChange}
+                onBlur={handleChange}
+                autoFocus
+                {...(errors[field.name] && {
+                  error: true,
+                  helperText: errors[field.name]
+                })}
+              />
+            )
+          })} 
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
+            disabled={!formIsValid()}
             sx={{ mt: 3, mb: 2 }}
           >
             Sign In
