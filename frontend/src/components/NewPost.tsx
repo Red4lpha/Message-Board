@@ -4,18 +4,22 @@ import { createMessage } from '../features/messages/messagesSlice';
 import { messagesDataInterface } from '../types/types';
 import avatar from '../assets/avatars/image-juliusomo.webp';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
+import { useNavigate } from 'react-router-dom';
 
 interface PostProps {
   btnType: string,
+  setIsReplying?: React.Dispatch<React.SetStateAction<boolean>>
   submitReply?: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
   //ref?: ForwardedRef<HTMLDivElement | null>
 }
 
-const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, ref) => {
+const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, setIsReplying, submitReply}, ref) => {
   const [text, setText] = useState("");
   const newClassName = btnType.toLowerCase();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const authUserId = useAppSelector((state) => state.auth.user?._id);
   const {isLoading, loadingArea} = useAppSelector((state) => state.messages)
 
   const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -24,16 +28,21 @@ const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, submitReply}, 
   
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if(!submitReply) {
-      const messageData: messagesDataInterface = {
-        text,
+    if (!authUserId) navigate('/login');
+
+    if(text !== ""){
+      if(setIsReplying) setIsReplying(false);
+      if(!submitReply) {
+        const messageData: messagesDataInterface = {
+          text,
+        }
+        dispatch(createMessage(messageData));
       }
-      dispatch(createMessage(messageData));
+      else {
+        submitReply(text, e);
+      }
+      setText("");
     }
-    else {
-      submitReply(text, e);
-    }
-    setText("");
   }
 
   useEffect(() => {

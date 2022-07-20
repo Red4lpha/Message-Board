@@ -13,6 +13,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import NewPost from "./NewPost";
 import DeleteConfirmation from "./DeleteConfirmation";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
+import { useNavigate } from "react-router-dom";
 dayjs().format();
 dayjs.extend(relativeTime);
 
@@ -37,6 +38,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}
   const msgRef = useRef<HTMLDivElement | null>(null);
   const replyRef = createRef<HTMLDivElement>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const authUserId = useAppSelector((state) => state.auth.user?._id);
   const date = dayjs(updatedAt).fromNow();
   const {isLoading, messageId, messagesArray} = useAppSelector((state) => state.messages);
@@ -66,6 +68,11 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}
       dispatch(updateMessage(messageData))
     }
     setEdit(!edit);
+  }
+
+  const toggleReply =() => {
+    if(!authUserId) navigate('/login');
+    else setIsReplying(!isReplying);
   }
   
   useEffect(() => {
@@ -168,7 +175,7 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}
               </span>
             </>
             :
-            <span onClick={() => setIsReplying(!isReplying)}>
+            <span onClick={toggleReply}>
               {/* <img src={replyIcon} alt="reply to post icon"/> */}
               <ReplyIcon aria-label="reply icon" />
               <span className="edit-text">Reply</span> 
@@ -196,7 +203,11 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}
         </section>
       </div>
       {isReplying ? 
-        <NewPost btnType="REPLY" submitReply={submitReply} ref={replyRef} />
+        <NewPost 
+        btnType="REPLY" 
+        submitReply={submitReply}
+        setIsReplying={setIsReplying} 
+        ref={replyRef} />
         : null}
       {isDeleting? <DeleteConfirmation setIsDeleting={setIsDeleting} submitDelete={submitDelete} /> : null}
     </>

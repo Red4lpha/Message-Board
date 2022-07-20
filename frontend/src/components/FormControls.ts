@@ -38,21 +38,7 @@ export const FormControls = () => {
       await dispatch(register(values));
     else console.log("Unknown form submit");
   }
-  useEffect(() => {
-    if (authIsError) {
-      handleError(formatRes(authMessage));
-    }
-    else if (authIsSuccess){
-      handleSuccess();
-    }
-    if ((values.formSubmitted && values.success) || authUser) {
-      navigate('/')
-    }
-
-    dispatch(reset())
-  }, [authIsError, authIsSuccess, authMessage, authUser, dispatch, navigate, values.formSubmitted, values.success])
-
-
+  
   const validate: any = (fieldValues = values) => {
     let temp: any = { ...errors };
 
@@ -169,6 +155,20 @@ export const FormControls = () => {
     }
     else return JSON.stringify(res);
   }
+
+  useEffect(() => {
+    if (authIsError) {
+      handleError(formatRes(authMessage));
+    }
+    else if (authIsSuccess){
+      handleSuccess();
+    }
+    if ((values.formSubmitted && values.success) || authUser) {
+      navigate('/')
+    }
+
+    dispatch(reset())
+  }, [authIsError, authIsSuccess, authMessage, authUser, dispatch, navigate, values.formSubmitted, values.success])
 
   return {
     values,
