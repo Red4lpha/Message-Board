@@ -1,7 +1,7 @@
 import { createRef, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { deleteMessage, setMsgId, updateMessage, voteMessage } from '../features/messages/messagesSlice';
-import { messagesDataInterface } from '../types/types';
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { deleteMessage, setMsgId, updateMessage, voteMessage } from './api/messagesSlice';
+import { messagesDataInterface } from '../../types/types';
 import {ReactComponent as PlusIcon} from '../assets/icon-plus.svg';
 import {ReactComponent as MinusIcon} from '../assets/icon-minus.svg';
 import avatar from '../assets/avatars/image-juliusomo.webp';
@@ -10,8 +10,8 @@ import {ReactComponent as EditIcon} from '../assets/icon-edit.svg';
 import {ReactComponent as DeleteIcon} from '../assets/icon-delete.svg';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import NewPost from "./NewPost";
-import DeleteConfirmation from "./DeleteConfirmation";
+import { NewPost } from "./NewPost";
+import { DeleteConfirmation } from '@/features/ui';
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { useNavigate } from "react-router-dom";
 dayjs().format();
@@ -28,7 +28,7 @@ interface CommentProps {
   submitReply: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}:CommentProps) => {
+export const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}:CommentProps) => {
   const [edit, setEdit] = useState(false);
   const [msg, setMsg] = useState(text);
   const [isReplying, setIsReplying] = useState(false);
@@ -213,5 +213,3 @@ const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}
     </>
   )
 }
-
-export default Comment

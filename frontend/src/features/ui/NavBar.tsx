@@ -4,10 +4,10 @@ import {AccountCircle } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { logout } from '../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { logout } from '../users/api/authSlice';
 
-export default function MenuAppBar() {
+export const NavBar = () => {
   const {user} = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch();
   

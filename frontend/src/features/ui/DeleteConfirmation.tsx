@@ -8,8 +8,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { ThemeProvider } from "@mui/material/styles";
-import Theme from "../style/theme";
-import NewPost from "./NewPost";
+//import Theme from "../style/theme";
+//import NewPost from "./NewPost";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -25,7 +25,7 @@ interface DeletionProps {
   submitDelete: () => void;
 }
 
-const DeleteConfirmation = ({setIsDeleting, submitDelete}:DeletionProps) => {
+export const DeleteConfirmation = ({setIsDeleting, submitDelete}:DeletionProps) => {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
@@ -96,5 +96,3 @@ const DeleteConfirmation = ({setIsDeleting, submitDelete}:DeletionProps) => {
     </div>
   ); */
 }
-
-export default DeleteConfirmation;

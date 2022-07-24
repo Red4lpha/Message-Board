@@ -1,10 +1,10 @@
 import { forwardRef, useEffect, useRef, useState} from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { createMessage } from '../features/messages/messagesSlice';
-import { messagesDataInterface } from '../types/types';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { createMessage } from './api/messagesSlice';
+import { messagesDataInterface } from '@/types/types';
 import avatar from '../assets/avatars/image-juliusomo.webp';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
-import { useNavigate } from 'react-router-dom';
 
 interface PostProps {
   btnType: string,
@@ -13,7 +13,7 @@ interface PostProps {
   //ref?: ForwardedRef<HTMLDivElement | null>
 }
 
-const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, setIsReplying, submitReply}, ref) => {
+export const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, setIsReplying, submitReply}, ref) => {
   const [text, setText] = useState("");
   const newClassName = btnType.toLowerCase();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -81,8 +81,6 @@ const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, setIsReplying,
     </section>
   ) 
 })
-
-export default NewPost
 
 const styles: { [name: string]: React.CSSProperties } = {
   

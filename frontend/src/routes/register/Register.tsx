@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container, ButtonGroup, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { FormControls } from './FormControls';
+import { FormControls } from '@/features/users/FormControls';
 
 const theme = createTheme();
 

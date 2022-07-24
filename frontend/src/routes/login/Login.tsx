@@ -1,7 +1,7 @@
 import {Avatar, Button, CssBaseline, TextField, Box, Typography, Container, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { FormControls } from './FormControls';
+import { FormControls } from '@/features/users/FormControls';
 
 const theme = createTheme();
 
@@ -17,7 +17,6 @@ const inputFieldValues = [
     label: 'Password',
   }
 ];
-
 
 const Login = () => {
   

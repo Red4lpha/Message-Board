@@ -1,16 +1,16 @@
 import { forwardRef, useEffect, useState } from 'react';
 import './Main.css';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import {  getMessages, reset } from '../features/messages/messagesSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {  getMessages, reset } from '@/features/comments/api/messagesSlice';
 //import Post from './Post';
 //import Comment from './Comment';
-import CommentContainer from './CommentContainer';
-import NewPost from './NewPost';
+import { CommentList } from '@/features/comments';
+import { NewPost } from '@/features/comments';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { Button } from '@mui/material';
-import { FormControls } from './FormControls';
+import { FormControls } from '@/features/users/FormControls';
 
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -76,9 +76,9 @@ const Main = () => {
         {}
         {messagesArray.length ? (
           <>
-            {messagesArray.filter(msg => msg.parent === null).map((msg: any, index) => (
+            {messagesArray.filter((msg:any) => msg.parent === null).map((msg: any, index: any) => (
                 <article>
-                  <CommentContainer
+                  <CommentList
                   key={msg._id}
                   id={msg._id}
                   owner={msg.owner.name}

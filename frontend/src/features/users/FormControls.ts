@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { json } from "stream/consumers";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { login, register, reset} from '../features/auth/authSlice'
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { login, register, reset} from './api/authSlice'
 
 const initialFormValues: {[key: string]: any} = {
   name: "",

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import messagesService from './messagesService'
-import { messagesDataInterface } from '../../types/types';
+import { messagesDataInterface } from '../../../types/types';
 import { AxiosError } from 'axios'
 
 interface ValidationErrors {

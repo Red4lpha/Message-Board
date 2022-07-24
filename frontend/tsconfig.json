@@ -27,5 +27,6 @@
   "include": [
     "src"
   ],
-  "exclude": ["node_modules", ".github", ".vscode"]
+  "exclude": ["node_modules", ".github", ".vscode"],
+  "extends": "./tsconfig.paths.json"
 }

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import authService from './authService'
-import { userDataInterface } from '../../types/types'
+import { userDataInterface } from '../../../types/types'
 import { AxiosError } from 'axios'
 
 interface ValidationErrors {

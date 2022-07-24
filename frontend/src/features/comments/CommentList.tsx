@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "../app/hooks";
-import { replyMessage, setMsgId} from '../features/messages/messagesSlice';
-import { messagesDataInterface } from '../types/types';
-import Comment from './Comment';
+import { useAppDispatch } from "@/store/hooks";
+import { replyMessage, setMsgId} from './api/messagesSlice';
+import { messagesDataInterface } from '@/types/types';
+import { Comment } from './Comment';
 
-const CommentContainer = ({id, owner, ownerId, vote, text, updatedAt, childArray, parent}:messagesDataInterface) => {
+export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArray, parent}:messagesDataInterface) => {
   //const [reply, setReply] = useState("");
   const dispatch = useAppDispatch();
   //const {replyMessage} = useAppSelector((state) => state.messages)
@@ -52,7 +52,7 @@ const CommentContainer = ({id, owner, ownerId, vote, text, updatedAt, childArray
         <div className="child-container">  
         {sortSuccessors(id).filter(child=> child.parent === id).map((child) => (
           
-          <CommentContainer
+          <CommentList
             key={child._id}
             id={child._id}
             owner={child.owner.name}
@@ -69,5 +69,3 @@ const CommentContainer = ({id, owner, ownerId, vote, text, updatedAt, childArray
     </>
   )
 }
-
-export default CommentContainer
