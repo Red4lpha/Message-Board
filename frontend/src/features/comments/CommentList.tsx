@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch } from "../../store/hooks";
 import { replyMessage, setMsgId} from './api/messagesSlice';
-import { messagesDataInterface } from '@/types/types';
+import { messagesDataInterface } from '../../types/types';
 import { Comment } from './Comment';
 
 export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArray, parent}:messagesDataInterface) => {

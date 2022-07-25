@@ -2,7 +2,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import './App.css';
 import Login from './routes/login/Login';
 import Main from './routes/main/Main';
-import { NavBar } from '@/features/ui';
+import { NavBar } from './features/ui';
 import Register from './routes/register/Register';
 
 //TODO look into why several get calls are used in the get messages function

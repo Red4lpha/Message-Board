@@ -1,16 +1,16 @@
 import { forwardRef, useEffect, useState } from 'react';
 import './Main.css';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {  getMessages, reset } from '@/features/comments/api/messagesSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {  getMessages, reset } from '../../features/comments/api/messagesSlice';
 //import Post from './Post';
 //import Comment from './Comment';
-import { CommentList } from '@/features/comments';
-import { NewPost } from '@/features/comments';
+import { CommentList } from '../../features/comments';
+import { NewPost } from '../../features/comments';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { Button } from '@mui/material';
-import { FormControls } from '@/features/users/FormControls';
+import { FormControls } from '../../features/users/FormControls';
 
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(

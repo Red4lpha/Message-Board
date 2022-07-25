@@ -1,9 +1,9 @@
 import { forwardRef, useEffect, useRef, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { createMessage } from './api/messagesSlice';
-import { messagesDataInterface } from '@/types/types';
-import avatar from '../assets/avatars/image-juliusomo.webp';
+import { messagesDataInterface } from '../../types/types';
+import avatar from '../../assets/avatars/image-juliusomo.webp';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 
 interface PostProps {
