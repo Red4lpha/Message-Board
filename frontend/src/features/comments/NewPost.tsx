@@ -1,57 +1,32 @@
-import { forwardRef, useEffect, useRef, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { createMessage } from './api/messagesSlice';
-import { messagesDataInterface } from '../../types/types';
+import { useState} from 'react';
+import { useAppSelector } from '../../store/hooks';
 import avatar from '../../assets/avatars/image-juliusomo.webp';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
+import { useContentText } from './useContentText';
 
 interface PostProps {
   btnType: string,
-  setIsReplying?: React.Dispatch<React.SetStateAction<boolean>>
-  submitReply?: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
-  //ref?: ForwardedRef<HTMLDivElement | null>
+  toggleReply?: () => void;
+  submitReply?: (e: any, text: string | undefined, 
+    setText: React.Dispatch<React.SetStateAction<string | undefined>>) => void;
 }
 
-export const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, setIsReplying, submitReply}, ref) => {
+export const NewPost = ({btnType, toggleReply, submitReply}: PostProps) => {
+
   const [text, setText] = useState("");
   const newClassName = btnType.toLowerCase();
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const authUserId = useAppSelector((state) => state.auth.user?._id);
   const {isLoading, loadingArea} = useAppSelector((state) => state.messages)
 
-  const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(event.target.value);
-  };
-  
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    if (!authUserId) navigate('/login');
+  const {
+    commentText,
+    setCommentText,
+    textareaRef
+  } = useContentText({text, toggleReply});
 
-    if(text !== ""){
-      if(setIsReplying) setIsReplying(false);
-      if(!submitReply) {
-        const messageData: messagesDataInterface = {
-          text,
-        }
-        dispatch(createMessage(messageData));
-      }
-      else {
-        submitReply(text, e);
-      }
-      setText("");
-    }
+  const handleClick = (e: any) => {
+    //? If a reply message
+    if (submitReply)submitReply(e, commentText, setCommentText);
   }
-
-  useEffect(() => {
-    if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = "75px";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = scrollHeight + "px";
-    }
-  }, [text]);
 
   //Loading indicator
   if (isLoading && loadingArea === 'createMessage'){
@@ -64,23 +39,24 @@ export const NewPost = forwardRef< HTMLDivElement, PostProps>(({btnType, setIsRe
 
   return (
     
-    <section className={`post-container container-style ${newClassName}-post`}
-      ref={ref}>
+    <section className={`post-container container-style ${newClassName}-post`}>
       <div className="post-avatar">
       <img src={avatar} alt="avatar icon"/>
       </div>
       <div className="post-form">
         <textarea ref={textareaRef} 
-        onChange={textAreaChange} 
+        onChange={(e) => setCommentText(e.target.value)} 
         style={styles.textareaDefaultStyle}
         placeholder="Add a comment...">
-          {text}
+          {commentText}
         </textarea>
       </div>
-      <div className="post-btn btn" onClick={handleSubmit}><span className='btn-text'>{btnType}</span></div>
+      <div className="post-btn btn" onClick={handleClick}>
+        <span className='btn-text'>{btnType}</span>
+      </div>
     </section>
   ) 
-})
+}
 
 const styles: { [name: string]: React.CSSProperties } = {
   

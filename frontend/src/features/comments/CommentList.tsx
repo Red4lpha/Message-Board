@@ -17,12 +17,15 @@ export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArr
     return obj;
   }
 
-  const submitReply = (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+ /*  const submitReply = (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     messageData.text = reply;
     if (id) dispatch(setMsgId(id));
     dispatch(replyMessage(messageData)) 
     //childArray.push(replyMessage)
-  }
+  } */
+
+
+
   useEffect(() => {
  /*    console.log(`child array for: ${id}`)
 
@@ -44,7 +47,6 @@ export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArr
         vote={vote}
         text={text}
         updatedAt={updatedAt}
-        submitReply={submitReply}
         parent={parent}
         />
 

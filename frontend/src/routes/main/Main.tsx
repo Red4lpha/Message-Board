@@ -2,16 +2,13 @@ import { forwardRef, useEffect, useState } from 'react';
 import './Main.css';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {  getMessages, reset } from '../../features/comments/api/messagesSlice';
-//import Post from './Post';
-//import Comment from './Comment';
 import { CommentList } from '../../features/comments';
 import { NewPost } from '../../features/comments';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import { Button } from '@mui/material';
 import { FormControls } from '../../features/users/FormControls';
-
+import { useReply } from '../../features/comments/useReply';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -20,7 +17,6 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-
 const Main = () => {
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
@@ -28,6 +24,7 @@ const Main = () => {
   const {messagesArray, isLoading, loadingArea, isError, message} = useAppSelector((state) => state.messages)
   console.log("main comp rerender")
   const {formatRes} = FormControls();
+  const {submitReply} = useReply();
   
 
 
@@ -56,7 +53,7 @@ const Main = () => {
     }
   },[dispatch, isError, message])
 
-   if (isLoading && loadingArea === 'getMessages') {
+  if (isLoading && loadingArea === 'getMessages') {
     return (
     <main>
       <h1>Main message</h1>
@@ -94,11 +91,9 @@ const Main = () => {
         ) : (
           <h2>No Replies Yet</h2>
         )}
-        <NewPost btnType="SEND"/>
+        <NewPost btnType="SEND" submitReply={submitReply}/>
       </main>
-      {/* <Button variant="outlined" onClick={() => setIsToastOpen(true)}>
-        Open success snackbar
-      </Button> */}
+
       <Snackbar open={isToastOpen} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
           {toastMsg}

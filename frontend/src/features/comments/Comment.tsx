@@ -1,21 +1,10 @@
-import { createRef, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { deleteMessage, setMsgId, updateMessage, voteMessage } from './api/messagesSlice';
+import { useAppSelector } from "../../store/hooks";
 import { messagesDataInterface } from '../../types/types';
-import {ReactComponent as PlusIcon} from '../../assets/icon-plus.svg';
-import {ReactComponent as MinusIcon} from '../../assets/icon-minus.svg';
-import avatar from '../../assets/avatars/image-juliusomo.webp';
-import {ReactComponent as ReplyIcon} from '../../assets/icon-reply.svg';
-import {ReactComponent as EditIcon} from '../../assets/icon-edit.svg';
-import {ReactComponent as DeleteIcon} from '../../assets/icon-delete.svg';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { NewPost } from "./NewPost";
-import { DeleteConfirmation } from '../ui';
+import { Content, Controls, DeleteConfirmation, Header, Vote } from '../ui';
+import { useDelete, useEdit } from '../comments'
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
-import { useNavigate } from "react-router-dom";
-dayjs().format();
-dayjs.extend(relativeTime);
+import { useReply } from "./useReply";
 
 interface CommentProps {
   id: messagesDataInterface['id'];
@@ -25,110 +14,29 @@ interface CommentProps {
   text:messagesDataInterface['text'];
   updatedAt:messagesDataInterface['updatedAt'];
   parent:messagesDataInterface['parent']; 
-  submitReply: (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-export const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submitReply}:CommentProps) => {
-  const [edit, setEdit] = useState(false);
-  const [msg, setMsg] = useState(text);
-  const [isReplying, setIsReplying] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);  
-  const [msgHeight, setMsgHeight] = useState(0);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const msgRef = useRef<HTMLDivElement | null>(null);
-  const replyRef = createRef<HTMLDivElement>();
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const authUserId = useAppSelector((state) => state.auth.user?._id);
-  const date = dayjs(updatedAt).fromNow();
-  const {isLoading, messageId, messagesArray} = useAppSelector((state) => state.messages);
-  const parentName: string = messagesArray.filter(msg => msg._id === parent).map((parentArray) => parentArray.owner.name).find(a => true);
-  const messageData: messagesDataInterface = {
-    id: id
-  }
-
-  const submitUpVote = () => {
-    messageData.vote = 1;
-    if (id) dispatch(setMsgId(id));
-    dispatch(voteMessage(messageData));
-  }
-  const submitDownVote = () => {
-    messageData.vote = -1;
-    if (id) dispatch(setMsgId(id));
-    dispatch(voteMessage(messageData));
-  }
-  const submitDelete = () => {
-    if (id) dispatch(setMsgId(id));
-    dispatch(deleteMessage(messageData));
-  }
-  const submitEdit = () => {
-    if(edit) {
-      messageData.text = msg;
-      if (id) dispatch(setMsgId(id))
-      dispatch(updateMessage(messageData))
-    }
-    setEdit(!edit);
-  }
-
-  const toggleReply =() => {
-    if(!authUserId) navigate('/login');
-    else setIsReplying(!isReplying);
-  }
+export const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent}:CommentProps) => {
+  const {isLoading, messageId } = useAppSelector((state) => state.messages);
   
-  useEffect(() => {
-    if (msgRef.current?.clientHeight) {
-      setMsgHeight(msgRef.current?.clientHeight);
-    }
-    if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = msgHeight + "px";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = scrollHeight + "px";
-    }
+  const {
+    isDeleting,
+    toggleDelete,
+    submitDelete,
+  } = useDelete(id);
 
-    const handleClickOutside = (event: any) => {
-      //? Detects outside clicks when editing a message
-      if (textareaRef.current && !textareaRef.current.contains(event.target)
-      && event.target.innerText !== 'UPDATE') {
-        setMsg(text);
-        setEdit(!edit);
-      }
-      //? Detects outside clicks when replying to a message
-      else if (isReplying && replyRef.current && !replyRef.current.contains(event.target)
-      && event.target.innerText !== 'Reply')
-      {
-        setIsReplying(!isReplying);
-      }
-    }
-    const handleEscPress = (event: any) => {
-      if (textareaRef.current && event.key === 'Escape') {
-        setMsg(text);
-        setEdit(!edit);
-      }
-      else if (replyRef.current && event.key === 'Escape') {
-        setIsReplying(!isReplying);
-      }
-    }
-
-    //? Event listener for cancelling text editing
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscPress);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleEscPress);
-    };
-  }, [msg, msgHeight, isReplying, replyRef, setMsg, setEdit]);
-
-  const styles: { [name: string]: React.CSSProperties } = {
+  const {
+    toggleEdit,
+    isEditing,
+    submitEdit
+  } = useEdit({id, text});
   
-    textareaDefaultStyle: {
-      padding: "8px 15px",
-      width: "100%",
-      height: (msgHeight+16) + "px",
-      display: "block",
-      resize: "none",
-      fontFamily: "'Rubik', 'Courier New', Courier, monospace",
-    },
-  };
+  const {
+    toggleReply,
+    isReplying,
+    submitReply
+  } = useReply(id);
+
 
   //? If loading is occuring the comment is replaced by a loading icon
   if (isLoading && messageId === id){
@@ -137,79 +45,27 @@ export const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent,submi
     )
   } 
 
-  //TODO remove the any from props
   return (
     <>
-      <div className="comment-container container-style">
-        <section className="vote">
-          <div className="vote-btn" onClick={submitUpVote}>
-            <PlusIcon aria-label="icon for plus upvote" />
-          </div>
-          <div className="vote-count">{vote} </div>
-          <div className="vote-btn" onClick={submitDownVote}>
-            <MinusIcon aria-label="icon for minus downvote" />
-          </div>
-        </section>
+      <div className="comment-container container-style">  
+        <Vote vote={vote} id={id} />
         
-        <section className="header">
-          <span className="header-avatar">
-            <img src={avatar} alt="avatar icon"/>
-          </span>
-          <h2 className="header-name">{owner}</h2>
-          {(authUserId === ownerId) ? <span className="header-you">you</span> :null }
-          <span className="header-time">{date}</span>
-        </section>
+        <Header id={id} owner={owner} ownerId={ownerId} updatedAt={updatedAt}/>
 
-        <section className="edit" >
-          {(authUserId === ownerId) ? 
-            <>
-              <span className="edit-delete" 
-                onClick={() => setIsDeleting(!isDeleting)}>
-                <DeleteIcon aria-label="delete icon" />
-                <span className="edit-text">Delete</span> 
-              </span>
-              <span className="edit-edit" 
-              onClick={() => setEdit(!edit)}>
-                <EditIcon aria-label="edit icon" />      
-                <span className="edit-text">Edit</span>  
-              </span>
-            </>
-            :
-            <span onClick={toggleReply}>
-              {/* <img src={replyIcon} alt="reply to post icon"/> */}
-              <ReplyIcon aria-label="reply icon" />
-              <span className="edit-text">Reply</span> 
-            </span>
-          }
-        </section>
+        <Controls ownerId={ownerId} toggleReply={toggleReply} 
+        toggleEdit={toggleEdit} toggleDelete={toggleDelete}/>
 
-        <section className="content">
-          {!edit ? 
-          <p className="message" ref={msgRef}>
-            {parent? <span className="message-parent-name">@{parentName} </span> : null}
-            {msg}
-          </p> 
-          : <>
-            <textarea ref={textareaRef} 
-            onChange={(e) => setMsg(e.target.value)} 
-            style={styles.textareaDefaultStyle}
-            value={msg}
-            / >
-            <div className="content-update-btn btn" onClick={submitEdit}>
-              <span className="btn-text">UPDATE</span>
-            </div>  
-          </>
-          }
-        </section>
+        <Content parent={parent} text={text} isEditing={isEditing} 
+        submitEdit={submitEdit} toggleEdit={toggleEdit} />
+        
       </div>
       {isReplying ? 
-        <NewPost 
-        btnType="REPLY" 
-        submitReply={submitReply}
-        setIsReplying={setIsReplying} 
-        ref={replyRef} />
+        <NewPost btnType="REPLY" submitReply={submitReply} toggleReply={toggleReply}/>
         : null}
-      {isDeleting? <DeleteConfirmation setIsDeleting={setIsDeleting} submitDelete={submitDelete} /> : null}
+
+      {isDeleting? 
+        <DeleteConfirmation toggleDelete={toggleDelete} submitDelete={submitDelete} /> 
+        : null}
     </>
   )
 }

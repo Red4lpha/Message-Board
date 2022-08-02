@@ -1,14 +1,10 @@
 export { Comment } from './Comment';
 export { CommentList } from './CommentList';
 export { deleteComment } from './deleteComment';
-export { edit } from './edit';
+export { useContentText } from './useContentText'
+export { useDelete } from './useDelete';
+export { useEdit } from './useEdit';
 export { NewPost } from './NewPost';
-export { reply } from './reply';
+export { useReply } from './useReply'
+export { useVote } from './useVote'
 export { utils } from './utils';
-export { vote } from './vote'
-
-
-
-
-
-

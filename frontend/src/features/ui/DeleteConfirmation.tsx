@@ -1,15 +1,7 @@
 import { forwardRef, Ref, useState } from "react";
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
-import { ThemeProvider } from "@mui/material/styles";
-//import Theme from "../style/theme";
-//import NewPost from "./NewPost";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -21,16 +13,16 @@ const Transition = forwardRef(function Transition(
 });
 
 interface DeletionProps {
-  setIsDeleting: React.Dispatch<React.SetStateAction<boolean>>; 
+  toggleDelete: () => void;
   submitDelete: () => void;
 }
 
-export const DeleteConfirmation = ({setIsDeleting, submitDelete}:DeletionProps) => {
+export const DeleteConfirmation = ({toggleDelete, submitDelete}:DeletionProps) => {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
     setOpen(false);
-    setIsDeleting(false);
+    toggleDelete();
   };
   const handleDelete = () => {
     submitDelete();
@@ -60,39 +52,4 @@ export const DeleteConfirmation = ({setIsDeleting, submitDelete}:DeletionProps) 
       </Dialog>
     </>
   );
-
- /*  return (
-    <div>
-      <ThemeProvider theme={Theme}>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-        keepMounted
-        aria-describedby="alert-dialog-slide-description"
-        PaperProps={{sx: {
-          width: 300,
-        } }}
-      >
-        <DialogTitle>{"Delete comment"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to delete this comment? This will remove the comment and can't be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined"
-          color="primary" >
-            NO, CANCEL
-          </Button>
-          <Button onClick={handleDelete} variant="outlined" 
-          sx={{backgroundColor: 'red', color: 'white'}}>
-            YES, DELETE
-          </Button>
-        </DialogActions>
-        
-      </Dialog>
-      </ThemeProvider>
-    </div>
-  ); */
 }
