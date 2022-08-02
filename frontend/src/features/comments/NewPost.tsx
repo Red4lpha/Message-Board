@@ -7,7 +7,7 @@ import { useContentText } from './useContentText';
 interface PostProps {
   btnType: string,
   toggleReply?: () => void;
-  submitReply?: (e: any, text: string | undefined, 
+  submitReply: (e: any, text: string | undefined, 
     setText: React.Dispatch<React.SetStateAction<string | undefined>>) => void;
 }
 
@@ -24,8 +24,7 @@ export const NewPost = ({btnType, toggleReply, submitReply}: PostProps) => {
   } = useContentText({text, toggleReply});
 
   const handleClick = (e: any) => {
-    //? If a reply message
-    if (submitReply)submitReply(e, commentText, setCommentText);
+    submitReply(e, commentText, setCommentText);
   }
 
   //Loading indicator

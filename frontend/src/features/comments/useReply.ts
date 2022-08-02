@@ -38,20 +38,9 @@ export const useReply = (id?: messagesDataInterface['id']) => {
     }
   }
 
-  const submitNewMessage = (e: any, text: string | undefined) => {
-    e.preventDefault();
-    if (!authUserId) navigate('/login');
-
-    else if(text !== "") {
-      dispatch(createMessage({text}));
-      //setText(""); 
-    }
-  }
-
   return {
     toggleReply,
     isReplying,
     submitReply,
-    //submitNewMessage
   }
 }
