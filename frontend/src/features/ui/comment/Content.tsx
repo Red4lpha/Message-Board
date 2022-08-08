@@ -18,23 +18,11 @@ export const Content = ({parent, text, isEditing,  toggleEdit ,submitEdit}:Conte
   const {
     commentText,
     setCommentText,
-    msgHeight,
     msgRef,
-    textareaRef
+    textareaRef,
+    styles
   } = useContentText({text, toggleEdit});
 
-
-  const styles: { [name: string]: React.CSSProperties } = {
-  
-    textareaDefaultStyle: {
-      padding: "8px 15px",
-      width: "100%",
-      height: (msgHeight+16) + "px",
-      display: "block",
-      resize: "none",
-      fontFamily: "'Rubik', 'Courier New', Courier, monospace",
-    },
-  };
 
   return (
     <section className="content">

@@ -1,6 +1,5 @@
 export { Comment } from './Comment';
 export { CommentList } from './CommentList';
-export { deleteComment } from './deleteComment';
 export { useContentText } from './useContentText'
 export { useDelete } from './useDelete';
 export { useEdit } from './useEdit';

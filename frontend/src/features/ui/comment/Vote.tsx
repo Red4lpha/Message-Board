@@ -3,17 +3,16 @@ import {ReactComponent as MinusIcon} from '../../../assets/icon-minus.svg';
 import { messagesDataInterface } from '../../../types/types';
 import { useVote } from '../../comments/useVote'
 
-
 interface VoteProps {
   vote: messagesDataInterface['vote']; 
   id: messagesDataInterface['id'];
 }
+
 export const Vote = ({vote, id}:VoteProps) => {
 
   const {
     submitDownVote,
     submitUpVote
-  
   } = useVote(id);
 
   return (

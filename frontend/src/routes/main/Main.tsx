@@ -7,8 +7,8 @@ import { NewPost } from '../../features/comments';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import { FormControls } from '../../features/users/FormControls';
 import { useReply } from '../../features/comments/useReply';
+import { utils } from '../../features/utils';
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -23,7 +23,7 @@ const Main = () => {
   const dispatch = useAppDispatch();
   const {messagesArray, isLoading, loadingArea, isError, message} = useAppSelector((state) => state.messages)
   console.log("main comp rerender")
-  const {formatRes} = FormControls();
+  const {formatRes} = utils();
   const {submitReply} = useReply();
   
 
@@ -40,7 +40,7 @@ const Main = () => {
 
   useEffect(() => {
     if (isError) {
-      setToastMsg(formatRes(message))
+      setToastMsg(formatRes(message)) 
       setIsToastOpen(true);
     } 
 

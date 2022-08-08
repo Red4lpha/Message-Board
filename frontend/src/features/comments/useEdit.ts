@@ -32,7 +32,6 @@ export const useEdit = ({id, text}: UseEditProps) => {
   return {
     toggleEdit,
     isEditing,
-    setIsEditing,
     commentText,
     setCommentText,
     submitEdit

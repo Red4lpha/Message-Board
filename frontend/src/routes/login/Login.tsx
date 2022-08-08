@@ -86,8 +86,7 @@ const Login = () => {
             fullWidth
             variant="contained"
             disabled={!formIsValid()}
-            sx={{ mt: 3, mb: 2 }}
-          >
+            sx={{ mt: 3, mb: 2 }}>
             Sign In
           </Button>
         </Box>

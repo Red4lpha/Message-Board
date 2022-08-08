@@ -20,7 +20,8 @@ export const NewPost = ({btnType, toggleReply, submitReply}: PostProps) => {
   const {
     commentText,
     setCommentText,
-    textareaRef
+    textareaRef,
+    styles
   } = useContentText({text, toggleReply});
 
   const handleClick = (e: any) => {
@@ -43,12 +44,11 @@ export const NewPost = ({btnType, toggleReply, submitReply}: PostProps) => {
       <img src={avatar} alt="avatar icon"/>
       </div>
       <div className="post-form">
-        <textarea ref={textareaRef} 
+        <textarea ref={textareaRef}  
         onChange={(e) => setCommentText(e.target.value)} 
         style={styles.textareaDefaultStyle}
-        placeholder="Add a comment...">
-          {commentText}
-        </textarea>
+        value={commentText}
+        placeholder="Add a comment..." />  
       </div>
       <div className="post-btn btn" onClick={handleClick}>
         <span className='btn-text'>{btnType}</span>
@@ -56,15 +56,3 @@ export const NewPost = ({btnType, toggleReply, submitReply}: PostProps) => {
     </section>
   ) 
 }
-
-const styles: { [name: string]: React.CSSProperties } = {
-  
-  textareaDefaultStyle: {
-    padding: "8px 15px",
-    width: "100%",
-    height: "75px",
-    display: "block",
-    resize: "none",
-    fontFamily: "'Rubik', 'Courier New', Courier, monospace",
-  },
-};

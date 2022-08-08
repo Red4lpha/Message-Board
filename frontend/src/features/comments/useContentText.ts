@@ -7,13 +7,26 @@ interface UseContentTextProps {
 }
 
 export const useContentText = (({text, toggleEdit, toggleReply}:UseContentTextProps) => {
-  //? Editing message will be set to 0, which will be changed by the text size,
+  //? When editing a message(the msgHeight) will be set to 16, 
+  //? which will be changed by the height size of the message text
   //? but replies and new messages will have an initial fixed height of 75px
-  const initialHeightValue = toggleEdit ? 0 : 75;
+  const initialHeightValue = toggleEdit ? 16 : 75;
   const [commentText, setCommentText] = useState(text);
   const [msgHeight, setMsgHeight] = useState(initialHeightValue);
   const msgRef = createRef<HTMLDivElement>();
   const textareaRef = createRef<HTMLTextAreaElement>();
+
+  const styles: { [name: string]: React.CSSProperties } = {
+  
+    textareaDefaultStyle: {
+      padding: "8px 15px",
+      width: "100%",
+      height: msgHeight + "px",
+      display: "block",
+      resize: "none",
+      fontFamily: "'Rubik', 'Courier New', Courier, monospace",
+    },
+  };
 
   useEffect(() => {
     //? Handles controlling of the textarea height
@@ -28,10 +41,12 @@ export const useContentText = (({text, toggleEdit, toggleReply}:UseContentTextPr
 
     const handleClickOutside = (event: any) => {
       //? Detects outside clicks when editing/replying a message
-      if (textareaRef.current && !textareaRef.current.contains(event.target)
+      if (textareaRef.current && (textareaRef.current === document.activeElement) 
+      && !textareaRef.current.contains(event.target)
       && event.target.innerText !== 'UPDATE' && event.target.innerText !== 'REPLY' 
       && event.target.innerText !== 'SEND' && event.target.innerText !== 'Reply'
       && event.target.innerText !== 'Edit') {
+        console.log('click detected')
         setCommentText(text);
         if (toggleEdit) toggleEdit();
         if (toggleReply) toggleReply();
@@ -39,7 +54,9 @@ export const useContentText = (({text, toggleEdit, toggleReply}:UseContentTextPr
     }
 
     const handleEscPress = (event: any) => {
-      if (textareaRef.current && event.key === 'Escape') {
+      //? Detects 'Esc' pressing when editing/replying a message
+      if (textareaRef.current //&& (toggleReply || toggleEdit)
+      && event.key === 'Escape') {
         setCommentText(text);
         if (toggleEdit) toggleEdit();
         if (toggleReply) toggleReply();
@@ -62,6 +79,7 @@ export const useContentText = (({text, toggleEdit, toggleReply}:UseContentTextPr
     msgHeight,
     setMsgHeight,
     msgRef,
-    textareaRef
+    textareaRef,
+    styles
   }
 });

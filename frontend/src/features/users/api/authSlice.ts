@@ -48,18 +48,6 @@ export const register = createAsyncThunk<{  rejectValue: ValidationErrors}, user
   }
 )
 
-// Register user
-/* export const register = createAsyncThunk<{rejectValue: ValidationErrors}>(
-  'auth/register',
-  async (user, {rejectWithValue}) => {
-    try {
-      return await authService.register(user)
-    } catch (err) {
-      return rejectWithValue(err.response.data)
-    }
-  }
-) */
-
 //? Login user
 export const login = createAsyncThunk<{  rejectValue: ValidationErrors}, userDataInterface>(
   'auth/login',
@@ -80,7 +68,6 @@ export const login = createAsyncThunk<{  rejectValue: ValidationErrors}, userDat
     }
   }
 )
-
 
 export const logout = createAsyncThunk('auth/logout', async () => {
   await authService.logout()

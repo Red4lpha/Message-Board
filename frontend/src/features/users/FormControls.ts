@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { utils } from "../utils";
 import { login, register, reset} from './api/authSlice'
 
 const initialFormValues: {[key: string]: any} = {
@@ -18,6 +19,9 @@ export const FormControls = () => {
   const [errors, setErrors] = useState({} as any);
   const [errorPrompt, setErrorPrompt] = useState("");
   const [form, setForm] = useState("login");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const {formatRes} = utils();
   const {
     user: authUser, 
     isLoading: authIsLoading, 
@@ -25,8 +29,7 @@ export const FormControls = () => {
     isError: authIsError, 
     message: authMessage
     } = useAppSelector((state) => state.auth)
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  
   
   const PostContactForm = async (
     values: any,
@@ -140,21 +143,6 @@ export const FormControls = () => {
     }
   };
 
-  const formatRes = (res: any) => {
-    let errorMsg = "";
-    if(res.message)
-      return res.message;
-    if(res.Message)
-      return res.Message;
-    else if(res.errors){
-      res.errors.forEach((el: { msg: string; }) => {
-        errorMsg += el.msg + "\n"
-      });
-      return errorMsg;
-    }
-    else return JSON.stringify(res);
-  }
-
   useEffect(() => {
     if (authIsError) {
       handleError(formatRes(authMessage));
@@ -178,6 +166,5 @@ export const FormControls = () => {
     handleReset,
     formIsValid,
     setForm,
-    formatRes
   };
 };

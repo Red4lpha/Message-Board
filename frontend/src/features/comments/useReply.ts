@@ -5,6 +5,7 @@ import { messagesDataInterface } from "../../types/types";
 import { createMessage, replyMessage } from "./api/messagesSlice";
 
 export const useReply = (id?: messagesDataInterface['id']) => {
+  //? id is only used for replying to msgs - non-child msgs will not need id
   const [isReplying, setIsReplying] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
