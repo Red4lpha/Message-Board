@@ -20,7 +20,7 @@ export const NavBar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky">
-        <Toolbar>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
           
           {!user && (
             
@@ -61,23 +61,28 @@ export const NavBar = () => {
           )}
           {user && (
             <>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              <Typography variant="h6" component="div" >
                 {user.name}
               </Typography>
+              
               <IconButton
                 size="large"
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={() => dispatch(logout())}
                 color="inherit"
-                edge="end"
-              >
-              <Typography variant="h6" sx={{ flexGrow: 1 }} paddingRight="10px">
-              Logout
-              </Typography>  
+                onClick={() => dispatch(logout())}
+                edge="end">  
+
+                <Typography variant="h6" 
+                  component="div"
+                  align="right"
+                  paddingRight="10px">
+                  Logout
+                </Typography>
                 <LogoutIcon />
               </IconButton>
+              
             </>
           )}
         </Toolbar>

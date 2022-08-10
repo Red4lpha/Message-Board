@@ -20,9 +20,10 @@ export const useEdit = ({id, text}: UseEditProps) => {
     setIsEditing(!isEditing);
   }
 
-  const submitEdit = () => {
+  const submitEdit = (editedMsg: string) => {
     if(isEditing) {
-      messageData.text = commentText;
+      messageData.text = editedMsg;
+      console.log("comment text: ", editedMsg);
       if (id) dispatch(setMsgId(id))
       dispatch(updateMessage(messageData))
     }
@@ -32,8 +33,8 @@ export const useEdit = ({id, text}: UseEditProps) => {
   return {
     toggleEdit,
     isEditing,
-    commentText,
-    setCommentText,
+    //commentText,
+    //setCommentText,
     submitEdit
   }
 }

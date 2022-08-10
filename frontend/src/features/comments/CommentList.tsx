@@ -1,42 +1,15 @@
-import { useEffect } from "react";
-import { useAppDispatch } from "../../store/hooks";
-import { replyMessage, setMsgId} from './api/messagesSlice';
 import { messagesDataInterface } from '../../types/types';
 import { Comment } from './Comment';
 
 export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArray, parent}:messagesDataInterface) => {
-  //const [reply, setReply] = useState("");
-  const dispatch = useAppDispatch();
-  //const {replyMessage} = useAppSelector((state) => state.messages)
-  const messageData: messagesDataInterface = {
-    id: id
-  } 
+
   const sortSuccessors = (id: any): any[] => {
     let obj = [];
     if (childArray)  obj = childArray.filter((o:any) => o.ancestors.find((ob: any) => ob === id ));
     return obj;
   }
+  let successors = sortSuccessors(id);
 
- /*  const submitReply = (reply: string, event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    messageData.text = reply;
-    if (id) dispatch(setMsgId(id));
-    dispatch(replyMessage(messageData)) 
-    //childArray.push(replyMessage)
-  } */
-
-
-
-  useEffect(() => {
- /*    console.log(`child array for: ${id}`)
-
-    childArray ? console.log(childArray) : 
-    console.log("no child")
-    console.log('---------------------')  */
-  })
-    
-
-  //TODO remove double sortSuccessors call
-  //TODO remove the any from props
   return (
     <>
       <Comment
@@ -50,9 +23,9 @@ export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArr
         parent={parent}
         />
 
-      { sortSuccessors(id).length? 
+      { successors.length? 
         <div className="child-container">  
-        {sortSuccessors(id).filter(child=> child.parent === id).map((child) => (
+        {successors.filter(child=> child.parent === id).map((child) => (
           
           <CommentList
             key={child._id}
@@ -62,7 +35,7 @@ export const CommentList = ({id, owner, ownerId, vote, text, updatedAt, childArr
             vote={child.votes.vote_count}
             text={child.text}
             updatedAt={child.updatedAt}
-            childArray={sortSuccessors(id)}
+            childArray={successors}
             parent={child.parent}
           />
         ))}

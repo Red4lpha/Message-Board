@@ -6,7 +6,7 @@ interface ContentProps {
   parent:messagesDataInterface['parent']; 
   text:messagesDataInterface['text']; 
   isEditing: boolean;
-  submitEdit: () => void;
+  submitEdit: (editedMsg: string) => void;
   toggleEdit: () => void;
 }
 
@@ -23,6 +23,12 @@ export const Content = ({parent, text, isEditing,  toggleEdit ,submitEdit}:Conte
     styles
   } = useContentText({text, toggleEdit});
 
+  const submitChanges = () => {
+    if((text && commentText) && text !== commentText){
+      submitEdit(commentText);
+    }
+    else toggleEdit();
+  }
 
   return (
     <section className="content">
@@ -37,7 +43,7 @@ export const Content = ({parent, text, isEditing,  toggleEdit ,submitEdit}:Conte
         style={styles.textareaDefaultStyle}
         value={commentText}
         / >
-        <div className="content-update-btn btn" onClick={submitEdit}>
+        <div className="content-update-btn btn" onClick={submitChanges}>
           <span className="btn-text">UPDATE</span>
         </div>  
       </>
