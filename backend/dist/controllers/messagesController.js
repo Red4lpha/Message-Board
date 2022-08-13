@@ -22,7 +22,8 @@ const logging_1 = __importDefault(require("../config/logging"));
 const messages_get = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     logging_1.default.info('messages_get', 'Loading messages displaying');
     return messages_1.default
-        .find({ parent: null }) //? To only get top level messages
+        //.find({parent: null}) //? To only get top level messages
+        .find({ deleted: false })
         .limit(50)
         .sort({ 'vote_count': -1 })
         .sort({ 'createdAt': 1 })
@@ -62,7 +63,8 @@ const messages_create = (req, res) => __awaiter(void 0, void 0, void 0, function
                 }
             });
             yield message.save();
-            return res.status(201).json({ message });
+            logging_1.default.info('messages_create', 'message created');
+            return res.status(201).json(message);
         }
         else {
             return res.status(400).json({ Message: `Error unknown user` });
@@ -87,7 +89,7 @@ const messages_reply_create = (req, res) => __awaiter(void 0, void 0, void 0, fu
         parentID = new mongoose_1.Types.ObjectId(req.params.id);
     }
     catch (_a) {
-        return res.status(400).json({ Message: 'Invalid params' });
+        return res.status(400).json({ Message: 'Invalid parent params' });
     }
     if (!req.body.text) {
         return res.status(400).json({ Message: 'Please add some text' });
@@ -119,11 +121,12 @@ const messages_reply_create = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 }
             });
             yield message.save();
-            return res.status(200).json({ message });
+            logging_1.default.info('messages_reply_create', 'Created a reply message');
+            return res.status(200).json(message);
         }
     }))
         .catch((error) => {
-        logging_1.default.error('messages_create', 'Error  cannot create new message', error);
+        logging_1.default.error('messages_create', 'Error cannot create new message', error);
         return res.status(500).json({ error });
     });
 });
@@ -140,7 +143,7 @@ const messages_update = (req, res) => {
         message_id = new mongoose_1.Types.ObjectId(req.params.id);
     }
     catch (_a) {
-        return res.status(400).json({ Message: 'Invalid params' });
+        return res.status(400).json({ Message: 'Invalid parent params' });
     }
     if (!req.body.text) {
         res.status(400).json({ Message: 'Invalid text update' });
@@ -149,13 +152,14 @@ const messages_update = (req, res) => {
     //? Find the user name based off the id
     return messages_1.default.findOne({ _id: message_id })
         .then((message) => __awaiter(void 0, void 0, void 0, function* () {
-        if (user_id != (message === null || message === void 0 ? void 0 : message.owner.name_id)) {
-            return res.status(401).json({ Message: `Unauthorized user - not the owner` });
-        }
-        if (message) {
+        if (message === null || message === void 0 ? void 0 : message.owner.name_id) {
+            if ((user_id === null || user_id === void 0 ? void 0 : user_id.toString()) !== message.owner.name_id.toString()) {
+                return res.status(401).json({ message: 'Unauthorized user - not the owner' });
+            }
             message.text = text;
             yield message.save();
-            return res.status(201).json({ message });
+            logging_1.default.info('messages_update', `Message id: ${message_id} updated`);
+            return res.status(201).json(message);
         }
         else {
             return res.status(400).json({ Message: `Unknown message` });
@@ -178,25 +182,26 @@ const messages_delete = (req, res) => {
         message_id = new mongoose_1.Types.ObjectId(req.params.id);
     }
     catch (_a) {
-        return res.status(400).json({ Message: 'Invalid params' });
+        return res.status(400).json({ message: 'Invalid parent params' });
     }
     if (!req.body) {
-        res.status(400).json({ Message: 'Invalid request' });
+        res.status(400).json({ message: 'Invalid request' });
     }
     //TODO: Implement protection route, for validation of user
     //? Find the user name based off the id
     return messages_1.default.findOne({ _id: message_id })
         .then((message) => __awaiter(void 0, void 0, void 0, function* () {
-        if (user_id != (message === null || message === void 0 ? void 0 : message.owner.name_id)) {
-            return res.status(401).json({ Message: `Unauthorized user - not the owner` });
-        }
-        if (message) {
+        if (message === null || message === void 0 ? void 0 : message.owner.name_id) {
+            if ((user_id === null || user_id === void 0 ? void 0 : user_id.toString()) !== message.owner.name_id.toString()) {
+                return res.status(401).json({ message: 'Unauthorized user - not the owner' });
+            }
             message.deleted = true;
             yield message.save();
-            return res.status(201).json({ message });
+            logging_1.default.info('messages_delete', `Message id: ${message_id} deleted`);
+            return res.status(201).json(message);
         }
         else {
-            return res.status(400).json({ Message: `Unknown message` });
+            return res.status(400).json({ message: 'Unknown message' });
         }
     }))
         .catch((error) => {
@@ -205,7 +210,7 @@ const messages_delete = (req, res) => {
     });
 };
 //? @desc Upvote or downvote a message
-//? @route POST /api/messages/:msgid/delete
+//? @route POST /api/messages/:msgid/vote
 //? @access private
 const messages_vote = (req, res) => {
     const user_id = req.body.user._id;
@@ -228,27 +233,28 @@ const messages_vote = (req, res) => {
         .then((message) => __awaiter(void 0, void 0, void 0, function* () {
         var _b;
         if (user_id == (message === null || message === void 0 ? void 0 : message.owner.name_id)) {
-            return res.status(400).json({ Message: `Cannot vote on your own message` });
+            return res.status(400).json({ message: "Cannot vote on your own message" });
         }
         //? Checks to see if the user has already voted
         const tempHolder = message === null || message === void 0 ? void 0 : message.votes.voters;
         if (tempHolder !== null) {
             if (tempHolder === null || tempHolder === void 0 ? void 0 : tempHolder.includes(user_id)) {
-                return res.status(400).json({ Message: `Already voted on this message` });
+                return res.status(400).json({ message: "Already voted on this message" });
             }
         }
         //? If the vote something other than a vote up or down(+1 or -1)
         if (vote != 1 && vote != -1) {
-            return res.status(400).json({ Message: `Invalid vote amount` });
+            return res.status(400).json({ message: "Invalid vote amount" });
         }
         else if (message) {
             message.votes.vote_count = +message.votes.vote_count + +vote;
             (_b = message.votes) === null || _b === void 0 ? void 0 : _b.voters.push(user_id);
             yield message.save();
-            return res.status(201).json({ message });
+            logging_1.default.info('messages_vote', `User: ${user_id} voted: ${vote} on ${message_id}`);
+            return res.status(201).json(message);
         }
         else {
-            return res.status(400).json({ Message: `Unknown message` });
+            return res.status(401).json({ message: "Not found" });
         }
     }))
         .catch((error) => {

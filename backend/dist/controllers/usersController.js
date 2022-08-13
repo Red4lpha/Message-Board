@@ -52,10 +52,13 @@ const users_create = [
                     password: hashedPassword,
                 });
                 yield user.save();
+                logging_1.default.info('user_create', `User: ${user.name} created`);
                 //? Return the info back
                 //TODO remove returning back the password and non-needed fields
                 return res.status(201).json({
-                    user,
+                    _id: user.id,
+                    name: user.name,
+                    email: user.email,
                     token: generateToken(user._id)
                 });
             }

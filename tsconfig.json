@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6", 
+    "module": "ES6", 
+    "sourceMap": true, 
+    "outDir": "./backend/dist",
+    "rootDir": "./backend", 
+    "strict": true, 
+    "moduleResolution": "node", 
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true, 
+    "paths": {
+      "types/*": ["./types/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".github", ".vscode", "frontend"]
+}
