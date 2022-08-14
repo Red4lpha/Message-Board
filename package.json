@@ -2,7 +2,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p backend/",
-    "start": "ts-node backend/index",
+    "start": "node backend/index/dist/index",
     "server": "nodemon backend/index",
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
