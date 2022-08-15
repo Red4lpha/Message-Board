@@ -65,8 +65,7 @@ app.use('/api/users', usersRouter);
 
 //? Serve frontend
 if (process.env.NODE_ENV === 'production') {
-  console.log('production hit')
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.use(express.static(path.join(__dirname, '../../frontend/build')));
 
   app.get('*', (req, res) =>
     res.sendFile(
@@ -81,6 +80,5 @@ if (process.env.NODE_ENV === 'production') {
 //? ---Create the server
 const httpServer = http.createServer(app);
 httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server running on ${config.server.hostname}:${config.server.port}`));
-console.log(process.env.NODE_ENV);
 //const port: string = process.env.PORT || '3000'
 //app.listen(port, () => console.log(`Running on port ${port}`))

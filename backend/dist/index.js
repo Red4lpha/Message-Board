@@ -50,15 +50,17 @@ app.use((req, res, next) => {
 app.use('/api/messages', messagesRouter);
 app.use('/api/users', usersRouter);
 //? ---Error Handling
-app.use((req, res, next) => {
-    const error = new Error('Not Found');
-    return res.status(404).json({
-        message: error.message
-    });
-});
+/* app.use((req,res, next) => {
+  const error = new Error('Not Found');
+  
+  return res.status(404).json({
+    message: error.message
+  });
+}); */
 //? Serve frontend
 if (process.env.NODE_ENV === 'production') {
-    app.use(express_1.default.static(path_1.default.join(__dirname, '../frontend/build')));
+    console.log('production hit');
+    app.use(express_1.default.static(path_1.default.join(__dirname, '../../frontend/build')));
     app.get('*', (req, res) => res.sendFile(path_1.default.resolve(__dirname, '../', 'frontend', 'build', 'index.html')));
 }
 else {
@@ -67,6 +69,7 @@ else {
 //? ---Create the server
 const httpServer = http_1.default.createServer(app);
 httpServer.listen(config_1.default.server.port, () => logging_1.default.info(NAMESPACE, `Server running on ${config_1.default.server.hostname}:${config_1.default.server.port}`));
+console.log(process.env.NODE_ENV);
 //const port: string = process.env.PORT || '3000'
 //app.listen(port, () => console.log(`Running on port ${port}`))
 //# sourceMappingURL=index.js.map
