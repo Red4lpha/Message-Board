@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
 require("dotenv/config");
 const body_parser_1 = __importDefault(require("body-parser"));
 const http_1 = __importDefault(require("http"));
@@ -55,6 +56,14 @@ app.use((req, res, next) => {
         message: error.message
     });
 });
+//? Serve frontend
+if (process.env.NODE_ENV === 'production') {
+    app.use(express_1.default.static(path_1.default.join(__dirname, '../frontend/build')));
+    app.get('*', (req, res) => res.sendFile(path_1.default.resolve(__dirname, '../', 'frontend', 'build', 'index.html')));
+}
+else {
+    app.get('/', (req, res) => res.send('Please set to production'));
+}
 //? ---Create the server
 const httpServer = http_1.default.createServer(app);
 httpServer.listen(config_1.default.server.port, () => logging_1.default.info(NAMESPACE, `Server running on ${config_1.default.server.hostname}:${config_1.default.server.port}`));
