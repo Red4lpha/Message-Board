@@ -26,11 +26,8 @@ const Main = () => {
   const {formatRes} = utils();
   const {submitReply} = useReply();
   
-
-
   let childArray  = messagesArray.filter(msg => msg.parent !== null)
   
-
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;

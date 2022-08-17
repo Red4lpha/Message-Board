@@ -10,14 +10,14 @@ const createTokenHeader = (token: string) => {
   };
 }
 
-// Get Messages
+//? Get Messages
 const getMessages = async () => {
   const response = await axios.get(API_URL);
 
   return response.data;
 }
 
-//Post top level message
+//? Post top level message
 const createMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
   const response = await axios.post(API_URL + 'create', messageData, header);
@@ -25,7 +25,7 @@ const createMessage = async (messageData: any, token: any) => {
   return response.data;
 }
 
-//Post a message reply
+//? Post a message reply
 const replyMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
   const {id} = messageData;
@@ -34,7 +34,7 @@ const replyMessage = async (messageData: any, token: any) => {
   return response.data;
 }
 
-//Update a message
+//? Update a message
 const updateMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
   const {id} = messageData;
@@ -43,7 +43,7 @@ const updateMessage = async (messageData: any, token: any) => {
   return response.data;
 }
 
-//Delete a message
+//? Delete a message
 const deleteMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
   const {id} = messageData;
@@ -52,7 +52,7 @@ const deleteMessage = async (messageData: any, token: any) => {
   return response.data;
 }
 
-//Post a vote
+//? Post a vote
 const voteMessage = async (messageData: any, token: any) => {
   const header = createTokenHeader(token);
   const {id} = messageData;
@@ -60,7 +60,6 @@ const voteMessage = async (messageData: any, token: any) => {
  
   return response.data;
 }
-
 
 const messagesService = {
   getMessages,

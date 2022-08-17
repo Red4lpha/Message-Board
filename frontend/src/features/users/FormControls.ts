@@ -13,7 +13,6 @@ const initialFormValues: {[key: string]: any} = {
   success: false
 };
 
-
 export const FormControls = () => {
   const [values, setValues] = useState(initialFormValues);
   const [errors, setErrors] = useState({} as any);

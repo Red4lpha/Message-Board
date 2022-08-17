@@ -26,7 +26,7 @@ const initialState: initialStateInterface = {
   isLoading: false,
   message: '',
 }
-//export const register = createAsyncThunk<{  rejectValue: ValidationErrors}>(
+
 //? Register user
 export const register = createAsyncThunk<{  rejectValue: ValidationErrors}, userDataInterface>(
   'auth/register',

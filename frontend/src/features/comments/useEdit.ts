@@ -10,7 +10,6 @@ interface UseEditProps {
 
 export const useEdit = ({id, text}: UseEditProps) => { 
   const [isEditing, setIsEditing] = useState(false);
-  const [commentText, setCommentText] = useState(text);
   const dispatch = useAppDispatch();
   const messageData: messagesDataInterface = {
     id: id
@@ -33,8 +32,6 @@ export const useEdit = ({id, text}: UseEditProps) => {
   return {
     toggleEdit,
     isEditing,
-    //commentText,
-    //setCommentText,
     submitEdit
   }
 }

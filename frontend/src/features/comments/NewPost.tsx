@@ -28,7 +28,7 @@ export const NewPost = ({btnType, toggleReply, submitReply}: PostProps) => {
     submitReply(e, commentText, setCommentText);
   }
 
-  //Loading indicator
+  //? Loading indicator
   if (isLoading && loadingArea === 'createMessage'){
     return (
       <div className='center'>
