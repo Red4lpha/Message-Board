@@ -126,15 +126,18 @@ textarea:focus {
   flex-direction: column;
   border-left: 2px solid var(--neutral-gray);
   padding-left: 35px;
-  gap: var(--desktop-msg-gap);
   margin-left: 35px;
-  margin-top: var(--desktop-msg-gap);
+  margin-top: 0;
 }
 .child-container > .child-container {
   display: block;
   border: 0;
   padding: 0;
   margin: 0;
+}
+
+.child-container > .comment-container {
+  margin-top: var(--desktop-msg-gap);
 }
 
 /* ------------Comment Vote Section Style--------------- */
@@ -316,8 +319,7 @@ section.reply-post {
     flex-direction: column;
     border-left: 2px solid var(--neutral-gray);
     padding-left: 0;
-    gap: var(--mobile-msg-gap);
-    margin-top: var(--mobile-msg-gap);
+    margin-top: 0;
     margin-left: var(--mobile-msg-gap);
   }
   .child-container > .child-container {
@@ -325,6 +327,10 @@ section.reply-post {
     border: 0;
     padding: 0;
     margin: 0;
+  }
+
+  .child-container > .comment-container {
+    margin-top: var(--mobile-msg-gap);
   }
 
   /* -----Vote Section Style------- */
