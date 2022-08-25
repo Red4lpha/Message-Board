@@ -23,6 +23,7 @@ const Login = () => {
   const {
     handleChange,
     handleFormSubmit,
+    handleGuestLogin,
     formIsValid,
     errors,
     errorPrompt,
@@ -88,6 +89,13 @@ const Login = () => {
             disabled={!formIsValid()}
             sx={{ mt: 3, mb: 2 }}>
             Sign In
+          </Button>
+          <Button onClick={handleGuestLogin}
+            type="button"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 0, mb: 2 }}>
+            Guest Login
           </Button>
         </Box>
       </Box>

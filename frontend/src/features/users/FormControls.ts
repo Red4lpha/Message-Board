@@ -142,6 +142,11 @@ export const FormControls = () => {
     }
   };
 
+  const handleGuestLogin = async (e: any) => {
+    e.preventDefault();
+    await PostContactForm({email: 'juliusomo@gmail.com', password: '12345'});
+  }
+
   useEffect(() => {
     if (authIsError) {
       handleError(formatRes(authMessage));
@@ -162,6 +167,7 @@ export const FormControls = () => {
     errorPrompt,
     handleChange,
     handleFormSubmit,
+    handleGuestLogin,
     handleReset,
     formIsValid,
     setForm,
