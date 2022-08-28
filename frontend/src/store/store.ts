@@ -1,12 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import authReducer from '../features/users/api/authSlice'
-import messageReducer from '../features/comments/api/messagesSlice'
+import authReducer from '../features/users/api/authSlice';
+import messageReducer from '../features/comments/api/messagesSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    messages: messageReducer 
-  },
+    messages: messageReducer
+  }
 });
 
 export type AppDispatch = typeof store.dispatch;

@@ -28,18 +28,17 @@ declare module '@mui/material/styles' {
 
 const Theme = createTheme({
   status: {
-    danger: '#e53e3e',
+    danger: '#e53e3e'
   },
   palette: {
     primary: {
-      main: '#64748B',
+      main: '#64748B'
     },
     neutral: {
       main: '#64748B',
-      contrastText: '#fff',
-    },
-  },
+      contrastText: '#fff'
+    }
+  }
 });
 
 export default Theme;
-

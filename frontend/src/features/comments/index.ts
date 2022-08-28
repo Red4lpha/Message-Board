@@ -1,9 +1,9 @@
 export { Comment } from './Comment';
 export { CommentList } from './CommentList';
-export { useContentText } from './useContentText'
+export { useContentText } from './useContentText';
 export { useDelete } from './useDelete';
 export { useEdit } from './useEdit';
 export { NewPost } from './NewPost';
-export { useReply } from './useReply'
-export { useVote } from './useVote'
+export { useReply } from './useReply';
+export { useVote } from './useVote';
 export { utils } from './utils';
