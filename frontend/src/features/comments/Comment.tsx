@@ -63,7 +63,7 @@ export const Comment = ({id, owner, ownerId, vote, text, updatedAt, parent}:Comm
         <NewPost btnType="REPLY" submitReply={submitReply} toggleReply={toggleReply}/>
         : null}
 
-      {isDeleting? 
+      {isDeleting ? 
         <DeleteConfirmation toggleDelete={toggleDelete} submitDelete={submitDelete} /> 
         : null}
     </>

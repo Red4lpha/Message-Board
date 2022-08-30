@@ -3,6 +3,7 @@ import './App.css';
 import Login from './routes/login/Login';
 import Main from './routes/main/Main';
 import { NavBar } from './features/ui';
+import { Footer } from './features/ui';
 import Register from './routes/register/Register';
 
 //TODO look into why several get calls are used in the get messages function
@@ -18,13 +19,14 @@ function App() {
     <div className="App">
       
       <Router>
-      <NavBar />
+        <NavBar />
         <Routes>
           <Route path='/' element={<Main />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/main' element={<Main />} />
         </Routes>
+        <Footer />
       </Router>  
     </div>
   );
